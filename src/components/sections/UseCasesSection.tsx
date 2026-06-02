@@ -21,7 +21,7 @@ export default function UseCasesSection() {
             key={item}
             className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4 shadow-sm"
           >
-            <span className="mt-0.5 text-primary">💡</span>
+            <span className="mt-0.5 text-emphasis">💡</span>
             <span className="text-sm text-foreground md:text-base">{item}</span>
           </div>
         ))}

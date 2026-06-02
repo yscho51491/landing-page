@@ -10,7 +10,7 @@ export default function Footer() {
           문의:{" "}
           <a
             href="mailto:official@artteacherlab.com"
-            className="text-primary hover:underline"
+            className="text-emphasis hover:underline"
           >
             official@artteacherlab.com
           </a>

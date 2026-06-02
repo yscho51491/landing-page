@@ -35,12 +35,12 @@ export default function HeroSection() {
 
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <span className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
+          <span className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground">
             <span aria-hidden>✨</span>
             AI 수업자료 생성 서비스
           </span>
 
-          <h1 className="animate-fade-in-up mt-8 text-3xl leading-snug font-extrabold text-primary delay-100 md:text-5xl lg:text-[3.25rem] lg:leading-tight">
+          <h1 className="animate-fade-in-up mt-8 text-3xl leading-snug font-extrabold text-emphasis delay-100 md:text-5xl lg:text-[3.25rem] lg:leading-tight">
             잠깐! 선생님 설마
             <br />
             수업 계획서 짜려고 PPT 켜셨나요?
@@ -48,7 +48,7 @@ export default function HeroSection() {
 
           <p className="animate-fade-in-up mt-5 text-xl leading-snug font-bold text-foreground delay-200 md:text-2xl lg:text-3xl">
             수업 준비, 이제{" "}
-            <span className="text-primary">3분</span>이면 충분합니다.
+            <span className="text-emphasis">3분</span>이면 충분합니다.
           </p>
 
           <p className="animate-fade-in-up mt-8 text-base leading-relaxed text-muted delay-300 md:text-lg">

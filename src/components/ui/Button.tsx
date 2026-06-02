@@ -10,10 +10,11 @@ type ButtonProps = {
 
 const variantStyles = {
   primary:
-    "bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/25",
-  secondary: "bg-accent text-white hover:bg-violet-700 shadow-lg shadow-accent/25",
+    "bg-primary text-primary-foreground hover:bg-primary-dark shadow-lg shadow-primary/30",
+  secondary:
+    "bg-accent text-white hover:bg-violet-700 shadow-lg shadow-accent/25",
   outline:
-    "border-2 border-primary text-primary hover:bg-primary hover:text-white",
+    "border-2 border-primary text-foreground hover:bg-primary hover:text-primary-foreground",
 };
 
 const sizeStyles = {

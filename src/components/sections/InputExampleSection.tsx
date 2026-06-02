@@ -19,7 +19,7 @@ export default function InputExampleSection() {
       <div className="mx-auto max-w-2xl">
         <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-lg">
           <div className="bg-primary px-6 py-4">
-            <p className="font-semibold text-white">수업 정보 입력</p>
+            <p className="font-semibold text-primary-foreground">수업 정보 입력</p>
           </div>
           <div className="divide-y divide-border">
             {exampleInputs.map((item) => (
@@ -39,7 +39,7 @@ export default function InputExampleSection() {
           <div className="bg-surface-alt px-6 py-4 text-center">
             <button
               type="button"
-              className="rounded-full bg-primary px-8 py-3 font-semibold text-white"
+              className="rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground"
             >
               생성하기
             </button>
@@ -53,7 +53,7 @@ export default function InputExampleSection() {
             수업 계획서, 활동지, 도안, 예시작품, PPT, 교사 대본까지 끝.
           </strong>
           <br />
-          <span className="text-sm text-primary">(단계별 생성)</span>
+          <span className="text-sm text-emphasis">(단계별 생성)</span>
         </p>
       </div>
 

@@ -28,7 +28,7 @@ export default function ComparisonSection() {
       <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-lg">
         <div className="grid grid-cols-2 bg-foreground text-sm font-semibold text-white md:text-base">
           <div className="px-4 py-4 text-center md:px-6">기존 수업 준비</div>
-          <div className="bg-primary px-4 py-4 text-center md:px-6">
+          <div className="bg-primary px-4 py-4 text-center text-primary-foreground md:px-6">
             아트티쳐랩 사용 후
           </div>
         </div>
@@ -42,14 +42,14 @@ export default function ComparisonSection() {
               {row.before}
             </div>
             <div className="flex items-center bg-primary/5 px-4 py-4 font-medium text-foreground md:px-6">
-              <span className="mr-2 text-primary">✓</span>
+              <span className="mr-2 text-emphasis">✓</span>
               {row.after}
             </div>
           </div>
         ))}
       </div>
 
-      <p className="mt-8 text-center text-base font-semibold text-primary md:text-lg">
+      <p className="mt-8 text-center text-base font-semibold text-emphasis md:text-lg">
         자료를 찾는 시간은 줄이고, 아이들을 만나는 수업의 질은 높이세요.
       </p>
     </Section>

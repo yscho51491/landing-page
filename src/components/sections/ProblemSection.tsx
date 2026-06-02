@@ -56,8 +56,8 @@ export default function ProblemSection() {
           이제 그만! 🙅‍♀️
         </p>
 
-        <div className="mt-8 rounded-2xl bg-primary/10 p-6 text-center md:p-8">
-          <p className="text-base font-semibold text-primary md:text-xl">
+        <div className="mt-8 rounded-2xl bg-primary/30 p-6 text-center md:p-8">
+          <p className="text-base font-semibold text-emphasis md:text-xl">
             준비 시간을 혁신적으로 줄여드립니다.
           </p>
         </div>

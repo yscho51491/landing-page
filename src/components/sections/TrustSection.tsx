@@ -51,7 +51,7 @@ export default function TrustSection() {
         <p className="mt-8 text-center text-base font-medium text-foreground md:text-lg">
           선생님은 수업에만 집중하실 수 있도록,
           <br />
-          <span className="text-primary">이 모든 것들은 아트티쳐랩이 고민할게요.</span>
+          <span className="text-emphasis">이 모든 것들은 아트티쳐랩이 고민할게요.</span>
         </p>
       </div>
 

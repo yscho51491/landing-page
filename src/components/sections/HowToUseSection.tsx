@@ -41,7 +41,7 @@ export default function HowToUseSection() {
             )}
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm transition-transform hover:-translate-y-1">
               <span className="text-3xl">{item.emoji}</span>
-              <span className="mt-2 block text-xs font-bold tracking-wider text-primary uppercase">
+              <span className="mt-2 block text-xs font-bold tracking-wider text-emphasis uppercase">
                 {item.step}
               </span>
               <h3 className="mt-2 text-lg font-bold text-foreground">

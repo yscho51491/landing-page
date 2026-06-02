@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const navItems = [
@@ -12,10 +13,15 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 md:px-8">
-        <Link href="#" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
-            AT
-          </span>
+        <Link href="#" className="flex items-center gap-2.5">
+          <Image
+            src="/images/logo.png"
+            alt="아트티쳐랩 로고"
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full object-cover"
+            priority
+          />
           <span className="text-lg font-bold text-foreground">아트티쳐랩</span>
         </Link>
 
@@ -24,7 +30,7 @@ export default function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-muted transition-colors hover:text-primary"
+              className="text-sm font-medium text-muted transition-colors hover:text-emphasis"
             >
               {item.label}
             </Link>
@@ -33,7 +39,7 @@ export default function Header() {
 
         <Link
           href="#pre-register"
-          className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark md:px-5 md:py-2.5"
+          className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark md:px-5 md:py-2.5"
         >
           무료 체험 신청
         </Link>

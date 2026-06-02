@@ -56,7 +56,7 @@ export default function FAQSection() {
               <span className="pr-4 text-sm font-semibold text-foreground md:text-base">
                 Q. {item.question}
               </span>
-              <span className="shrink-0 text-primary">
+              <span className="shrink-0 text-emphasis">
                 {openIndex === index ? "−" : "+"}
               </span>
             </button>
@@ -74,7 +74,7 @@ export default function FAQSection() {
       <div className="mt-10 text-center">
         <a
           href="mailto:official@artteacherlab.com"
-          className="inline-flex items-center gap-2 rounded-full border-2 border-primary px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+          className="inline-flex items-center gap-2 rounded-full border-2 border-primary px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
         >
           그 외 문의하기
         </a>

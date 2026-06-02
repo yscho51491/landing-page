@@ -1,4 +1,5 @@
-import Section, { SectionHeader } from "@/components/ui/Section";
+import { SectionHeader } from "@/components/ui/Section";
+import Image from "next/image";
 
 const deliverables = [
   {
@@ -72,17 +73,33 @@ const deliverables = [
 
 export default function DeliverablesSection() {
   return (
-    <Section id="deliverables" alt>
-      <SectionHeader emoji="📦" title="한 번의 입력으로 제공되는 수업자료 패키지" />
+    <section id="deliverables" className="relative py-16 md:py-24">
+      <div className="absolute inset-0">
+        <Image
+          src="/images/deliverables-bg.png"
+          alt=""
+          fill
+          className="object-cover opacity-70"
+          sizes="100vw"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-[#fffdf5]/88 backdrop-blur-[2px]" />
+      </div>
 
-      <div className="space-y-8">
-        {deliverables.map((item) => (
-          <div
-            key={item.number}
-            className="rounded-2xl border border-border bg-surface p-6 shadow-sm md:p-8"
-          >
+      <div className="relative z-10 mx-auto max-w-6xl px-5 md:px-8">
+        <SectionHeader
+          emoji="📦"
+          title="한 번의 입력으로 제공되는 수업자료 패키지"
+        />
+
+        <div className="mx-auto max-w-2xl space-y-6">
+          {deliverables.map((item) => (
+            <div
+              key={item.number}
+              className="rounded-2xl border border-border bg-white/95 p-6 shadow-sm backdrop-blur-sm md:p-7"
+            >
             <div className="flex items-start gap-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-lg font-bold text-white">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">
                 {item.number}
               </span>
               <div className="flex-1">
@@ -108,11 +125,11 @@ export default function DeliverablesSection() {
                           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                         )}
                         {item.isQuote && (
-                          <span className="text-primary">&ldquo;</span>
+                          <span className="text-emphasis">&ldquo;</span>
                         )}
                         {subItem}
                         {item.isQuote && (
-                          <span className="text-primary">&rdquo;</span>
+                          <span className="text-emphasis">&rdquo;</span>
                         )}
                       </li>
                     ))}
@@ -121,8 +138,9 @@ export default function DeliverablesSection() {
               </div>
             </div>
           </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }

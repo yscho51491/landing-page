@@ -199,11 +199,11 @@ export default function ServiceIntroDemo() {
                     <p className="mt-0.5 min-h-[1.5rem] font-semibold text-foreground">
                       {hasValue ? (
                         <>
-                          <span className="text-primary">
+                          <span className="text-emphasis">
                             {displayValues[index]}
                           </span>
                           {isActive && (
-                            <span className="typing-cursor ml-0.5 inline-block w-0.5 animate-pulse bg-primary">
+                            <span className="typing-cursor ml-0.5 inline-block w-0.5 animate-pulse bg-emphasis">
                               |
                             </span>
                           )}
@@ -231,7 +231,7 @@ export default function ServiceIntroDemo() {
               AI가 실제 수업에 바로 활용할 수 있는
             </strong>
             <br />
-            <span className="text-xl font-bold text-primary">자료 패키지</span>
+            <span className="text-xl font-bold text-emphasis">자료 패키지</span>
             를 생성합니다.
           </p>
 
@@ -301,7 +301,7 @@ export default function ServiceIntroDemo() {
           </div>
 
           {phase === "outputs" && (
-            <p className="mt-4 animate-pulse-soft text-center text-xs font-medium text-primary">
+            <p className="mt-4 animate-pulse-soft text-center text-xs font-medium text-emphasis">
               ✨ {outputItems[activeOutputIndex].label} 생성 중... (클릭하면
               크게 볼 수 있어요)
             </p>
