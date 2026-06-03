@@ -1,3 +1,4 @@
+import HeaderAuth from "@/components/auth/HeaderAuth";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -37,12 +38,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <Link
-          href="#pre-register"
-          className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark md:px-5 md:py-2.5"
-        >
-          무료 체험 신청
-        </Link>
+        <HeaderAuth />
       </div>
     </header>
   );
