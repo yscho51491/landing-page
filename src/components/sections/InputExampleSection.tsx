@@ -1,3 +1,4 @@
+import StudioCtaButton from "@/components/auth/StudioCtaButton";
 import Section, { SectionHeader } from "@/components/ui/Section";
 import ExampleImageGallery from "@/components/sections/ExampleImageGallery";
 
@@ -37,12 +38,7 @@ export default function InputExampleSection() {
             ))}
           </div>
           <div className="bg-surface-alt px-6 py-4 text-center">
-            <button
-              type="button"
-              className="rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground"
-            >
-              생성하기
-            </button>
+            <StudioCtaButton size="md">생성하기</StudioCtaButton>
           </div>
         </div>
 

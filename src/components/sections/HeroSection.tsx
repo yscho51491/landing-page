@@ -1,4 +1,4 @@
-import Button from "@/components/ui/Button";
+import StudioCtaButton from "@/components/auth/StudioCtaButton";
 import HeroImageGallery from "@/components/sections/HeroImageGallery";
 
 const deliverableTags = [
@@ -83,7 +83,7 @@ export default function HeroSection() {
           </p>
 
           <div className="animate-fade-in-up mt-10 delay-600">
-            <Button>🚀 무료로 수업자료 만들어보기</Button>
+            <StudioCtaButton>🚀 무료로 수업자료 만들어보기</StudioCtaButton>
           </div>
 
           <div className="animate-fade-in-up mt-12 flex flex-wrap items-center justify-center gap-3 delay-700">

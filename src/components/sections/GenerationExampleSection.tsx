@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/components/ui/Button";
+import StudioCtaButton from "@/components/auth/StudioCtaButton";
 import Section, { SectionHeader } from "@/components/ui/Section";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -161,7 +161,7 @@ export default function GenerationExampleSection() {
       </div>
 
       <div className="mt-10 text-center">
-        <Button>내 주제로 수업자료 생성해보기</Button>
+        <StudioCtaButton>내 주제로 수업자료 생성해보기</StudioCtaButton>
       </div>
 
       {lightboxItem && lightboxIndex !== null && (

@@ -1,4 +1,4 @@
-import { getSupabaseEnv } from "@/lib/supabase/env";
+import { getSupabaseEnv, hasSupabaseEnv } from "@/lib/supabase/env";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -6,6 +6,10 @@ export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  if (!hasSupabaseEnv()) {
+    return supabaseResponse;
+  }
 
   const { url, anonKey } = getSupabaseEnv();
 

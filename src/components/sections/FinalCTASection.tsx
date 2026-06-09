@@ -1,4 +1,4 @@
-import Button from "@/components/ui/Button";
+import StudioCtaButton from "@/components/auth/StudioCtaButton";
 
 export default function FinalCTASection() {
   return (
@@ -18,7 +18,7 @@ export default function FinalCTASection() {
           PPT, 교사대본까지 한 번에 완성해드립니다. ✨
         </p>
         <div className="mt-8">
-          <Button>지금 수업자료 생성해보기</Button>
+          <StudioCtaButton>지금 수업자료 생성해보기</StudioCtaButton>
         </div>
       </div>
     </section>
