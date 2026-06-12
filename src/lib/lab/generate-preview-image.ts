@@ -1,5 +1,9 @@
 import { IMAGE_GEN_SETTINGS } from "@/lib/lesson/image-config";
-import { buildLabPreviewImagePrompt } from "@/lib/lab/preview-image-prompt";
+import {
+  buildLabPreviewImagePrompt,
+  buildLabPreviewImagePromptFallback,
+  isImageSafetyRejection,
+} from "@/lib/lab/preview-image-prompt";
 import type { LabLessonIdea } from "@/types/lab";
 import OpenAI from "openai";
 
@@ -23,15 +27,11 @@ async function callWithRateLimitRetry<T>(fn: () => Promise<T>): Promise<T> {
   }
 }
 
-export async function generateLabPreviewImage(
-  apiKey: string,
-  idea: LabLessonIdea,
-  words: [string, string],
+async function requestImage(
+  openai: OpenAI,
+  prompt: string,
+  settings: (typeof IMAGE_GEN_SETTINGS)["sampleArt"],
 ): Promise<string> {
-  const settings = IMAGE_GEN_SETTINGS.sampleArt;
-  const prompt = buildLabPreviewImagePrompt(idea, words);
-  const openai = new OpenAI({ apiKey });
-
   const response = await callWithRateLimitRetry(() =>
     openai.images.generate({
       model: settings.model,
@@ -48,4 +48,35 @@ export async function generateLabPreviewImage(
   }
 
   return `data:image/png;base64,${b64}`;
+}
+
+export async function generateLabPreviewImage(
+  apiKey: string,
+  idea: LabLessonIdea,
+  words: [string, string],
+): Promise<string> {
+  const settings = IMAGE_GEN_SETTINGS.sampleArt;
+  const openai = new OpenAI({ apiKey });
+
+  const prompts = [
+    buildLabPreviewImagePrompt(idea, words),
+    buildLabPreviewImagePromptFallback(idea, words),
+  ];
+
+  let lastError: unknown;
+
+  for (const prompt of prompts) {
+    try {
+      return await requestImage(openai, prompt, settings);
+    } catch (err) {
+      lastError = err;
+      if (isImageSafetyRejection(err) && prompt !== prompts[prompts.length - 1]) {
+        console.warn("[lab-preview-image] safety rejection, retrying with fallback prompt");
+        continue;
+      }
+      throw err;
+    }
+  }
+
+  throw lastError ?? new Error("IMAGE_FAILED");
 }

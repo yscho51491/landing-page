@@ -3,10 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const navItems = [
-  { label: "완성작 구경", href: "/" },
-  { label: "수업 아이디어 실험실", href: "/lab" },
-  { label: "서비스 소개", href: "/service" },
-  { label: "수업 만들기", href: "/studio" },
+  { label: "완성작 구경", mobileLabel: "홈", href: "/" },
+  { label: "수업 아이디어 실험실", mobileLabel: "랩", href: "/lab" },
+  { label: "서비스 소개", mobileLabel: "소개", href: "/service" },
+  { label: "수업 만들기", href: "/studio", hideOnMobile: true },
 ];
 
 export default function Header() {
@@ -25,14 +25,23 @@ export default function Header() {
           <span className="text-lg font-bold text-foreground">아트티쳐랩</span>
         </Link>
 
-        <nav className="flex items-center gap-1 md:gap-2">
+        <nav className="flex items-center gap-0.5 md:gap-2">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-2.5 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary hover:text-primary-foreground md:px-3"
+              className={`rounded-md px-2 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary hover:text-primary-foreground md:px-3 ${
+                item.hideOnMobile ? "hidden md:inline-flex" : ""
+              }`}
             >
-              {item.label}
+              {item.mobileLabel ? (
+                <>
+                  <span className="md:hidden">{item.mobileLabel}</span>
+                  <span className="hidden md:inline">{item.label}</span>
+                </>
+              ) : (
+                item.label
+              )}
             </Link>
           ))}
         </nav>

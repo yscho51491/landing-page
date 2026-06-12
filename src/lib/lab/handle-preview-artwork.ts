@@ -4,6 +4,7 @@ import {
   spendArtlabCoins,
 } from "@/lib/coins/spend-coins";
 import { generateLabPreviewImage } from "@/lib/lab/generate-preview-image";
+import { isImageSafetyRejection } from "@/lib/lab/preview-image-prompt";
 import { parseLabLessonIdea } from "@/lib/lab/parse-idea";
 import { createClient } from "@/lib/supabase/server";
 import type { LabLessonIdea } from "@/types/lab";
@@ -112,11 +113,29 @@ export async function handlePreviewArtworkPost(request: Request) {
           { status: 429 },
         );
       }
+      if (err.status === 400 && isImageSafetyRejection(err)) {
+        return NextResponse.json(
+          {
+            error:
+              "이미지 안전 필터에 걸렸습니다. 코인은 환불되었으니 다시 시도해 주세요.",
+          },
+          { status: 422 },
+        );
+      }
     }
 
-    const code = err instanceof Error ? err.message : "IMAGE_FAILED";
+    if (isImageSafetyRejection(err)) {
+      return NextResponse.json(
+        {
+          error:
+            "이미지 안전 필터에 걸렸습니다. 코인은 환불되었으니 다시 시도해 주세요.",
+        },
+        { status: 422 },
+      );
+    }
+
     return NextResponse.json(
-      { error: `완성작 미리보기 생성에 실패했습니다. (${code})` },
+      { error: "완성작 미리보기 생성에 실패했습니다. 잠시 후 다시 시도해 주세요." },
       { status: 500 },
     );
   }
