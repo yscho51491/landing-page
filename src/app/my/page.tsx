@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function MyPage() {
   let isLoggedIn = false;
+  let userEmail: string | null = null;
   let lessons: Awaited<ReturnType<typeof getMyLabLessons>> = [];
 
   if (hasSupabaseEnv()) {
@@ -23,6 +24,7 @@ export default async function MyPage() {
     } = await supabase.auth.getUser();
     isLoggedIn = Boolean(user);
     if (user) {
+      userEmail = user.email ?? null;
       lessons = await getMyLabLessons(user.id);
     }
   }
@@ -31,7 +33,11 @@ export default async function MyPage() {
     <>
       <Header />
       <main className="min-h-[calc(100dvh-4.25rem)] w-full bg-[#f7f4ef]">
-        {isLoggedIn ? <MyPageContent lessons={lessons} /> : <LoginGate redirectPath="/my" />}
+        {isLoggedIn ? (
+          <MyPageContent lessons={lessons} userEmail={userEmail} />
+        ) : (
+          <LoginGate redirectPath="/my" />
+        )}
       </main>
     </>
   );

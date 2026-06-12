@@ -1,3 +1,4 @@
+import ReferralClaimRunner from "@/components/auth/ReferralClaimRunner";
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
@@ -21,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${notoSansKr.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <ReferralClaimRunner />
+      </body>
     </html>
   );
 }

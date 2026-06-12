@@ -1,6 +1,7 @@
 "use client";
 
 import { buildAuthCallbackUrl } from "@/lib/auth/site-url";
+import { PENDING_REFERRER_STORAGE_KEY } from "@/lib/referral/referral-errors";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 
@@ -10,9 +11,18 @@ type LoginButtonsProps = {
 
 export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) {
   const [loading, setLoading] = useState<"google" | "kakao" | null>(null);
+  const [referrerEmail, setReferrerEmail] = useState("");
 
   const signInWithOAuth = async (provider: "google" | "kakao") => {
     setLoading(provider);
+
+    const trimmedReferrer = referrerEmail.trim().toLowerCase();
+    if (trimmedReferrer) {
+      sessionStorage.setItem(PENDING_REFERRER_STORAGE_KEY, trimmedReferrer);
+    } else {
+      sessionStorage.removeItem(PENDING_REFERRER_STORAGE_KEY);
+    }
+
     const supabase = createClient();
 
     const redirectTo = buildAuthCallbackUrl(redirectPath);
@@ -36,6 +46,23 @@ export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) 
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-3">
+      <label className="text-left">
+        <span className="text-xs font-semibold text-foreground">
+          추천인 ID <span className="font-normal text-muted">(선택)</span>
+        </span>
+        <input
+          type="email"
+          value={referrerEmail}
+          onChange={(e) => setReferrerEmail(e.target.value)}
+          placeholder="추천인 이메일 주소"
+          disabled={loading !== null}
+          className="mt-1.5 w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted/70 focus:border-primary focus:outline-none disabled:opacity-60"
+        />
+        <span className="mt-1 block text-[11px] leading-relaxed text-muted">
+          신규 가입 시 나와 추천인에게 아트랩코인 5개가 추가됩니다.
+        </span>
+      </label>
+
       <button
         type="button"
         onClick={() => signInWithOAuth("google")}
