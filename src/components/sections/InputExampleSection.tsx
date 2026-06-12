@@ -46,7 +46,7 @@ export default function InputExampleSection() {
           입력 후 생성 버튼을 누르면
           <br />
           <strong className="text-foreground">
-            수업 계획서, 활동지, 도안, 예시작품, PPT, 교사 대본까지 끝.
+            수업 계획서, 활동지, 도안, 예시작품, 교사 대본까지 끝.
           </strong>
           <br />
           <span className="text-sm text-emphasis">(단계별 생성)</span>

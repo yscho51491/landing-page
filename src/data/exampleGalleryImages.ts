@@ -22,13 +22,6 @@ export const exampleGalleryImages: GalleryItem[] = [
     thumbFit: "cover",
   },
   {
-    id: "ppt",
-    src: "/images/ppt-vertical.png",
-    label: "📊 수업용 PPT",
-    alt: "호국보훈 미술 수업 PPT 슬라이드 예시 (세로형)",
-    thumbFit: "contain",
-  },
-  {
     id: "sample-work",
     src: "/images/sample-work.png",
     label: "🎨 예시 완성작",

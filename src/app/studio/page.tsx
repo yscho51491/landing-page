@@ -1,6 +1,7 @@
+import LoginGate from "@/components/auth/LoginGate";
 import StudioWorkspace from "@/components/studio/StudioWorkspace";
+import { getCurrentUserPlan } from "@/lib/profile/get-plan";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "수업 만들기 | 아트티쳐랩",
@@ -14,12 +15,21 @@ export default async function StudioPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=/studio");
+    return (
+      <main className="w-full">
+        <LoginGate
+          redirectPath="/studio"
+          subtitle="로그인하고 3분 만에 수업자료를 만들어보세요!"
+        />
+      </main>
+    );
   }
+
+  const plan = await getCurrentUserPlan(user.id);
 
   return (
     <main className="min-h-[calc(100vh-73px)] bg-background px-5 py-10 md:py-14">
-      <StudioWorkspace />
+      <StudioWorkspace plan={plan} />
     </main>
   );
 }

@@ -5,6 +5,7 @@ import LessonInputForm from "@/components/studio/LessonInputForm";
 import LessonResultsPanel from "@/components/studio/LessonResultsPanel";
 import { fetchGenerateLesson } from "@/lib/lesson/fetch-generate";
 import { fetchImageAssetSet } from "@/lib/lesson/fetch-generate-images";
+import { fetchPublishLesson } from "@/lib/lesson/fetch-publish";
 import { IMAGE_ASSET_META } from "@/lib/lesson/mock-generate";
 import type {
   ImageAssetKind,
@@ -12,7 +13,10 @@ import type {
   LessonInput,
   LessonTextOutput,
 } from "@/types/lesson";
-import { useCallback, useEffect, useState } from "react";
+import type { UserPlan } from "@/types/profile";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+export type PublishStatus = "idle" | "publishing" | "published" | "error";
 
 function initialImageAssets(): Record<ImageAssetKind, ImageAssetState> {
   return {
@@ -24,14 +28,14 @@ function initialImageAssets(): Record<ImageAssetKind, ImageAssetState> {
       status: "idle",
       label: IMAGE_ASSET_META.sampleArt.label,
     },
-    ppt: {
-      status: "idle",
-      label: IMAGE_ASSET_META.ppt.label,
-    },
   };
 }
 
-export default function StudioWorkspace() {
+type StudioWorkspaceProps = {
+  plan: UserPlan;
+};
+
+export default function StudioWorkspace({ plan }: StudioWorkspaceProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [input, setInput] = useState<LessonInput | null>(null);
   const [output, setOutput] = useState<LessonTextOutput | null>(null);
@@ -42,6 +46,36 @@ export default function StudioWorkspace() {
   );
   const [openaiConfigured, setOpenaiConfigured] = useState<boolean | null>(
     null,
+  );
+  const [publishStatus, setPublishStatus] = useState<PublishStatus>("idle");
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const publishRequestedRef = useRef(false);
+
+  const handlePublish = useCallback(
+    async (
+      lessonInput: LessonInput,
+      lessonOutput: LessonTextOutput,
+      coverImageDataUrl: string,
+    ) => {
+      if (publishRequestedRef.current) {
+        return;
+      }
+      publishRequestedRef.current = true;
+      setPublishStatus("publishing");
+      setPublishError(null);
+
+      try {
+        await fetchPublishLesson(lessonInput, lessonOutput, coverImageDataUrl);
+        setPublishStatus("published");
+      } catch (err) {
+        publishRequestedRef.current = false;
+        setPublishStatus("error");
+        setPublishError(
+          err instanceof Error ? err.message : "수업 공개에 실패했습니다.",
+        );
+      }
+    },
+    [],
   );
 
   useEffect(() => {
@@ -124,6 +158,11 @@ export default function StudioWorkspace() {
             progressLabel: undefined,
           },
         }));
+
+        // 무료 플랜: 예시작품 완성 시 메인 페이지에 자동 공개
+        if (kind === "sampleArt" && plan === "free" && images[0]) {
+          void handlePublish(input, output, images[0]);
+        }
       } catch (err) {
         const message =
           err instanceof Error
@@ -142,7 +181,7 @@ export default function StudioWorkspace() {
         }));
       }
     },
-    [input, output],
+    [input, output, plan, handlePublish],
   );
 
   const handleReset = () => {
@@ -151,7 +190,18 @@ export default function StudioWorkspace() {
     setImageAssets(initialImageAssets());
     setErrorMessage(null);
     setImageErrorMessage(null);
+    setPublishStatus("idle");
+    setPublishError(null);
+    publishRequestedRef.current = false;
   };
+
+  const handleRequestPublish = useCallback(() => {
+    const cover = imageAssets.sampleArt.images?.[0];
+    if (!input || !output || !cover) {
+      return;
+    }
+    void handlePublish(input, output, cover);
+  }, [input, output, imageAssets.sampleArt.images, handlePublish]);
 
   const showResults = Boolean(input && output);
 
@@ -167,7 +217,7 @@ export default function StudioWorkspace() {
               보세요
             </h1>
             <p className="mt-2 text-sm text-muted md:text-base">
-              1차: 수업 계획서 · 대본 · 2차: 활동지, 예시작품, PPT (버튼별 생성)
+              1차: 수업 계획서 · 대본 · 2차: 활동지, 예시작품 (버튼별 생성)
             </p>
           </div>
 
@@ -208,6 +258,10 @@ export default function StudioWorkspace() {
             imageAssets={imageAssets}
             onRequestImage={handleRequestImage}
             onReset={handleReset}
+            plan={plan}
+            publishStatus={publishStatus}
+            publishError={publishError}
+            onRequestPublish={handleRequestPublish}
           />
         </>
       )}

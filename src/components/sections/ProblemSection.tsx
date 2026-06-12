@@ -6,7 +6,6 @@ const tasks = [
   { emoji: "❓", text: "도입 질문과 설명 자료 준비" },
   { emoji: "✂️", text: "활동지와 도안 제작" },
   { emoji: "🖼️", text: "예시 완성작 이미지 준비" },
-  { emoji: "📊", text: "PPT 제작" },
   { emoji: "🎤", text: "교사용 멘트와 진행 대본 작성" },
 ];
 

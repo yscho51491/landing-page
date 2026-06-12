@@ -1,10 +1,8 @@
 import {
-  buildPptSlideImagePrompt,
   buildSampleArtImagePrompt,
   buildWorksheetImagePrompt,
 } from "@/lib/lesson/image-prompts";
 import { IMAGE_GEN_SETTINGS } from "@/lib/lesson/image-config";
-import type { PptSlideOutline } from "@/lib/lesson/ppt-outline";
 import type { ImageAssetKind, LessonInput, LessonResult } from "@/types/lesson";
 import OpenAI from "openai";
 
@@ -33,18 +31,11 @@ function buildPrompt(
   input: LessonInput,
   output: LessonResult,
   index: number,
-  pptSlide?: PptSlideOutline,
 ): string {
   if (kind === "worksheet") {
     return buildWorksheetImagePrompt(input, output, index);
   }
-  if (kind === "sampleArt") {
-    return buildSampleArtImagePrompt(input, output, index);
-  }
-  if (!pptSlide) {
-    throw new Error("PPT_SLIDE_REQUIRED");
-  }
-  return buildPptSlideImagePrompt(input, output, pptSlide, index);
+  return buildSampleArtImagePrompt(input, output, index);
 }
 
 export async function generateLessonImageAsset(
@@ -54,7 +45,6 @@ export async function generateLessonImageAsset(
     input: LessonInput;
     output: LessonResult;
     index: number;
-    pptSlide?: PptSlideOutline;
   },
 ): Promise<string> {
   const settings = IMAGE_GEN_SETTINGS[params.kind];
@@ -63,7 +53,6 @@ export async function generateLessonImageAsset(
     params.input,
     params.output,
     params.index,
-    params.pptSlide,
   );
 
   const openai = new OpenAI({ apiKey });

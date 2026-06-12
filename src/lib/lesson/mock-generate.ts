@@ -7,16 +7,11 @@ export const IMAGE_ASSET_META: Record<
   worksheet: {
     label: "활동지 / 도안",
     imageCount: 3,
-    readyNote: "AI 생성 선화 활동지 3종 (Low 품질)",
+    readyNote: "AI 생성 선화 활동지 3종",
   },
   sampleArt: {
     label: "예시 작품",
     imageCount: 3,
-    readyNote: "AI 생성 예시 작품 3종 (Medium 품질)",
-  },
-  ppt: {
-    label: "PPT",
-    imageCount: 10,
-    readyNote: "슬라이드 이미지 10장 (Medium 품질) · ZIP 다운로드 가능",
+    readyNote: "AI 생성 예시 작품 3종",
   },
 };

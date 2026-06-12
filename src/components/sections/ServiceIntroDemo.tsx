@@ -44,13 +44,7 @@ const outputItems: OutputItem[] = [
     alt: "수박 푸드 아트 예시작품",
     fit: "cover-center",
   },
-  {
-    label: "PPT",
-    image: "/images/summer-demo/ppt-1.png",
-    alt: "수업용 PPT 슬라이드",
-    fit: "cover-top",
-  },
-  {
+{
     label: "교사대본",
     image: "/images/summer-demo/teacher-script.png",
     alt: "교사 진행 대본 예시",

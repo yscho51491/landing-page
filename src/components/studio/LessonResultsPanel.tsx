@@ -1,8 +1,8 @@
 "use client";
 
 import LessonPlanView from "@/components/studio/LessonPlanView";
+import type { PublishStatus } from "@/components/studio/StudioWorkspace";
 import TeacherScriptView from "@/components/studio/TeacherScriptView";
-import { downloadImagesAsZip } from "@/lib/lesson/download-image-zip";
 import { IMAGE_ASSET_META } from "@/lib/lesson/mock-generate";
 import type {
   ImageAssetKind,
@@ -11,6 +11,7 @@ import type {
   LessonTextOutput,
   ResultTabId,
 } from "@/types/lesson";
+import type { UserPlan } from "@/types/profile";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -25,7 +26,74 @@ type LessonResultsPanelProps = {
   imageAssets: Record<ImageAssetKind, ImageAssetState>;
   onRequestImage: (kind: ImageAssetKind) => void;
   onReset: () => void;
+  plan: UserPlan;
+  publishStatus: PublishStatus;
+  publishError: string | null;
+  onRequestPublish: () => void;
 };
+
+function PublishSection({
+  plan,
+  publishStatus,
+  publishError,
+  canPublish,
+  onRequestPublish,
+}: {
+  plan: UserPlan;
+  publishStatus: PublishStatus;
+  publishError: string | null;
+  canPublish: boolean;
+  onRequestPublish: () => void;
+}) {
+  if (publishStatus === "published") {
+    return (
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+        이 수업이 메인 페이지 <strong>수업 아이디어</strong>에 공개되었습니다.
+      </div>
+    );
+  }
+
+  if (plan === "free") {
+    return (
+      <div className="rounded-2xl border border-border bg-surface-alt/60 px-5 py-4 text-sm text-muted">
+        {publishStatus === "publishing" ? (
+          <span>메인 페이지에 공개하는 중...</span>
+        ) : publishStatus === "error" ? (
+          <span className="text-red-600">
+            자동 공개에 실패했습니다. {publishError}
+          </span>
+        ) : (
+          <span>
+            <strong className="text-foreground">무료 플랜</strong> · 예시작품이
+            완성되면 이 수업이 메인 페이지에 자동으로 공개됩니다.
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface-alt/60 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="text-sm text-muted">
+        {publishStatus === "error" ? (
+          <span className="text-red-600">공개에 실패했습니다. {publishError}</span>
+        ) : canPublish ? (
+          <span>이 수업을 메인 페이지 수업 아이디어에 공개할 수 있습니다.</span>
+        ) : (
+          <span>예시작품을 먼저 생성하면 메인 페이지에 공개할 수 있습니다.</span>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={onRequestPublish}
+        disabled={!canPublish || publishStatus === "publishing"}
+        className="shrink-0 rounded-full bg-emphasis px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {publishStatus === "publishing" ? "공개하는 중..." : "메인에 공개하기"}
+      </button>
+    </div>
+  );
+}
 
 function ImageAssetPreview({
   kind,
@@ -55,50 +123,6 @@ function ImageAssetPreview({
     return (
       <div className="flex min-h-[160px] items-center justify-center rounded-xl border border-border bg-surface px-4 text-center text-xs text-muted">
         {meta.label} 대기
-      </div>
-    );
-  }
-
-  if (kind === "ppt") {
-    return (
-      <div className="rounded-xl border border-border bg-surface">
-        <div className="max-h-[min(70vh,640px)] space-y-3 overflow-y-auto p-3">
-          {images.map((src, index) => (
-            <figure
-              key={index}
-              className="overflow-hidden rounded-lg border border-border/80 bg-surface-alt"
-            >
-              <div className="relative mx-auto aspect-[3/4] w-full max-w-[280px]">
-                <Image
-                  src={src}
-                  alt={`PPT 슬라이드 ${index + 1}`}
-                  fill
-                  className="object-contain"
-                  unoptimized
-                />
-              </div>
-              <figcaption className="px-3 py-2 text-center text-xs text-muted">
-                슬라이드 {index + 1}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-        <div className="border-t border-border px-3 py-3">
-          <button
-            type="button"
-            onClick={() =>
-              downloadImagesAsZip(
-                images,
-                "수업용-ppt-slides.zip",
-                "slide",
-              )
-            }
-            className="w-full rounded-full border border-emphasis bg-surface px-4 py-2 text-sm font-semibold text-emphasis transition-colors hover:bg-emphasis/5"
-          >
-            ZIP 파일로 다운로드
-          </button>
-          <p className="mt-2 text-center text-xs text-muted">{meta.readyNote}</p>
-        </div>
       </div>
     );
   }
@@ -137,8 +161,15 @@ export default function LessonResultsPanel({
   imageAssets,
   onRequestImage,
   onReset,
+  plan,
+  publishStatus,
+  publishError,
+  onRequestPublish,
 }: LessonResultsPanelProps) {
   const [activeTab, setActiveTab] = useState<ResultTabId>("lessonPlan");
+  const canPublish =
+    imageAssets.sampleArt.status === "ready" &&
+    (imageAssets.sampleArt.images?.length ?? 0) > 0;
 
   return (
     <div className="space-y-6">
@@ -198,8 +229,7 @@ export default function LessonResultsPanel({
           이미지 자료 (2차 생성)
         </p>
         <p className="mt-1 text-xs text-muted">
-          버튼을 누르면 AI가 이미지를 생성합니다. 활동지·예시작품은 각 3장, PPT는
-          슬라이드 10장입니다.
+          버튼을 누르면 AI가 이미지를 생성합니다. 활동지·예시작품은 각 3장입니다.
         </p>
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -226,7 +256,7 @@ export default function LessonResultsPanel({
           })}
         </div>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-3">
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
           {(Object.keys(IMAGE_ASSET_META) as ImageAssetKind[]).map((kind) => (
             <ImageAssetPreview
               key={kind}
@@ -236,6 +266,14 @@ export default function LessonResultsPanel({
           ))}
         </div>
       </div>
+
+      <PublishSection
+        plan={plan}
+        publishStatus={publishStatus}
+        publishError={publishError}
+        canPublish={canPublish}
+        onRequestPublish={onRequestPublish}
+      />
     </div>
   );
 }

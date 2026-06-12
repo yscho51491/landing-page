@@ -79,7 +79,6 @@ export default function ExampleImageGallery({
                 src={item.src}
                 alt={item.alt}
                 fill
-                unoptimized={item.id === "ppt"}
                 className={`transition-transform duration-500 group-hover:scale-[1.02] ${
                   item.thumbFit === "contain"
                     ? "object-contain object-center p-1"
@@ -132,7 +131,6 @@ export default function ExampleImageGallery({
                 src={activeItem.src}
                 alt={activeItem.alt}
                 fill
-                unoptimized={activeItem.id === "ppt"}
                 className="object-contain p-2 md:p-4"
                 sizes="(max-width: 768px) 100vw, 896px"
               />

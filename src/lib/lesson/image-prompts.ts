@@ -1,5 +1,4 @@
 import type { LessonInput, LessonResult } from "@/types/lesson";
-import type { PptSlideOutline } from "@/lib/lesson/ppt-outline";
 
 function collectKeyActivities(result: LessonResult): string {
   const phases = [
@@ -26,9 +25,15 @@ function lessonContext(input: LessonInput, output: LessonResult): string {
   ].join("\n");
 }
 
+const WORKSHEET_NO_TEXT_RULES = [
+  "ABSOLUTELY NO text of any kind in the image.",
+  "NO letters, NO numbers, NO words, NO labels, NO captions, NO titles, NO typography, NO speech bubbles, NO writing lines, NO form fields, NO name/date blanks.",
+  "Illustration and decorative line art ONLY — pure visual worksheet with zero readable characters.",
+] as const;
+
 const WORKSHEET_VARIANTS = [
   "Main activity line-art worksheet: central drawing subject for the lesson, large clear outlines for coloring or tracing, minimal decorative border, empty space for student work.",
-  "Step-by-step practice sheet: 3-4 numbered simple drawing steps, line art only, arrows showing progression, helper shapes and guides.",
+  "Step-by-step practice sheet: 3-4 simple drawing steps in panels, line art only, arrows showing progression, helper shapes and guides — no step numbers.",
   "Supplementary design worksheet: decorative frame, pattern practice area, small motif related to the lesson theme, extra creative space.",
 ] as const;
 
@@ -49,8 +54,8 @@ export function buildWorksheetImagePrompt(
   return [
     "Black and white line art only, NO color fill, NO grayscale shading.",
     "Portrait A4 ratio educational art class worksheet for Korean teachers.",
+    ...WORKSHEET_NO_TEXT_RULES,
     variant,
-    "No long paragraphs of text. Only short Korean labels if needed (max 3-4 words).",
     "Clean printable design, high contrast outlines.",
     lessonContext(input, output),
   ].join("\n");
@@ -66,26 +71,12 @@ export function buildSampleArtImagePrompt(
 
   return [
     "Colored example artwork for a Korean art class, portrait orientation.",
+    "FRAMING RULES: the complete artwork must be fully visible inside the frame.",
+    "Keep the main subject centered with comfortable margins on all sides.",
+    "Nothing important may touch or get cut off at the edges of the image.",
     variant,
     "Appropriate for the stated audience age group.",
     "No watermark, no photo realism, illustrated art class style.",
-    lessonContext(input, output),
-  ].join("\n");
-}
-
-export function buildPptSlideImagePrompt(
-  input: LessonInput,
-  output: LessonResult,
-  slide: PptSlideOutline,
-  slideIndex: number,
-): string {
-  return [
-    `Vertical presentation slide image for Korean art classroom, slide ${slideIndex + 1} of 10.`,
-    `Slide title (render clearly in Korean at top): ${slide.title}`,
-    `Main visual content: ${slide.visualDescription}`,
-    `Key text bullets to include (short Korean, large readable font): ${slide.bulletPoints.join(" / ")}`,
-    "Clean pastel educational design, slide layout with title bar and illustration area.",
-    "Professional teacher PPT aesthetic, not cluttered.",
     lessonContext(input, output),
   ].join("\n");
 }

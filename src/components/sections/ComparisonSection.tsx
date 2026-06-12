@@ -7,8 +7,8 @@ const comparisons = [
     after: "한 화면에서 수업자료 패키지 완성",
   },
   {
-    before: "계획서, 도안, PPT를 따로 제작",
-    after: "계획서, 도안, PPT, 대본까지 한 번에 제공",
+    before: "계획서, 도안을 따로 제작",
+    after: "계획서, 도안, 대본까지 한 번에 제공",
   },
   {
     before: "연령에 맞게 직접 수정",

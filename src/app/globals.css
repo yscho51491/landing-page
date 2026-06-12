@@ -30,3 +30,90 @@
   --color-border: var(--border);
   --font-sans: var(--font-noto-sans-kr);
 }
+
+/* 수업 아이디어 실험실 — 로그인 게이트 배경 레일 애니메이션 */
+@keyframes lab-rail-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes lab-rail-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.lab-rail-up {
+  animation: lab-rail-up 55s linear infinite;
+}
+
+.lab-rail-down {
+  animation: lab-rail-down 55s linear infinite;
+}
+
+/* 수업 아이디어 실험실 — 가로 마퀴(이미지 롤링) */
+@keyframes lab-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes lab-marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.lab-marquee-left {
+  animation: lab-marquee-left 35s linear infinite;
+  will-change: transform;
+}
+
+.lab-marquee-right {
+  animation: lab-marquee-right 35s linear infinite;
+  will-change: transform;
+}
+
+/* 헤드라인 단어 교체 — 겹침 없이 순차 페이드 */
+@keyframes lab-word-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lab-word-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+}
+
+.lab-word-enter {
+  animation: lab-word-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lab-word-exit {
+  animation: lab-word-exit 0.45s cubic-bezier(0.55, 0, 0.55, 0.2) both;
+}

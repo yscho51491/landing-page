@@ -15,7 +15,7 @@ export default function FinalCTASection() {
           <br />
           수업계획서, 활동지, 도안, 예시작품,
           <br />
-          PPT, 교사대본까지 한 번에 완성해드립니다. ✨
+          교사대본까지 한 번에 완성해드립니다. ✨
         </p>
         <div className="mt-8">
           <StudioCtaButton>지금 수업자료 생성해보기</StudioCtaButton>

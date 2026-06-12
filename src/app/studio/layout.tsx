@@ -1,4 +1,4 @@
-import StudioHeader from "@/components/layout/StudioHeader";
+import Header from "@/components/layout/Header";
 
 export default function StudioLayout({
   children,
@@ -7,7 +7,7 @@ export default function StudioLayout({
 }) {
   return (
     <>
-      <StudioHeader />
+      <Header />
       {children}
     </>
   );

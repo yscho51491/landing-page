@@ -7,6 +7,7 @@ export function buildAudienceGuidance(input: LessonInput): string {
   return [
     `이번 수업의 targetAge(대상)는 반드시 「${audience}」이다.`,
     `수업 시간(duration)은 「${duration}」이다.`,
+    "유치부·초등부·중고등·청소년센터·미술학원·방과후 등 기관 특성에 맞는 재료·활동 난이도·완성도를 적용한다.",
     "targetAge와 duration이 바뀌면 수업 목표, 어휘, 활동 난이도, 대화 예시, 준비물, 작품 감상 방식, 신체·인지 부담까지 전부 그 연령·시간에 맞게 달라져야 한다.",
     "유아·초등용 표현(아동, 학생, 아이들)을 쓰지 말고 「수강자」「대상자」로 통일한다.",
     audience.includes("시니어") || audience.includes("성인")

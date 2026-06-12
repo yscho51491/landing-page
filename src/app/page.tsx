@@ -1,43 +1,29 @@
+﻿import LessonExploreGrid from "@/components/explore/LessonExploreGrid";
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import HeroSection from "@/components/sections/HeroSection";
-import ProblemSection from "@/components/sections/ProblemSection";
-import ServiceIntroSection from "@/components/sections/ServiceIntroSection";
-import InputExampleSection from "@/components/sections/InputExampleSection";
-import DeliverablesSection from "@/components/sections/DeliverablesSection";
-import TargetAudienceSection from "@/components/sections/TargetAudienceSection";
-import ComparisonSection from "@/components/sections/ComparisonSection";
-import UseCasesSection from "@/components/sections/UseCasesSection";
-import GenerationExampleSection from "@/components/sections/GenerationExampleSection";
-import BenefitsSection from "@/components/sections/BenefitsSection";
-import HowToUseSection from "@/components/sections/HowToUseSection";
-import TrustSection from "@/components/sections/TrustSection";
-import PreRegisterSection from "@/components/sections/PreRegisterSection";
-import FAQSection from "@/components/sections/FAQSection";
-import FinalCTASection from "@/components/sections/FinalCTASection";
+import { lessonExamples, type LessonExample } from "@/data/lessonExamples";
+import { getPublishedLessonExamples } from "@/lib/explore/get-published-lessons";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+function shuffle(items: LessonExample[]): LessonExample[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+export default async function Home() {
+  const published = await getPublishedLessonExamples();
+  const items = shuffle([...published.items, ...lessonExamples]);
+
   return (
     <>
       <Header />
-      <main>
-        <HeroSection />
-        <ProblemSection />
-        <ServiceIntroSection />
-        <InputExampleSection />
-        <DeliverablesSection />
-        <TargetAudienceSection />
-        <ComparisonSection />
-        <UseCasesSection />
-        <GenerationExampleSection />
-        <BenefitsSection />
-        <HowToUseSection />
-        <TrustSection />
-        <PreRegisterSection />
-        <FAQSection />
-        <FinalCTASection />
+      <main className="w-full">
+        <LessonExploreGrid items={items} details={published.details} />
       </main>
-      <Footer />
     </>
   );
 }

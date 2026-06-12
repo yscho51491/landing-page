@@ -51,12 +51,6 @@ export default function HeaderAuth() {
 
     return (
       <div className="flex items-center gap-2">
-        <Link
-          href="/studio"
-          className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
-        >
-          수업 만들기
-        </Link>
         <span className="hidden max-w-[100px] truncate text-sm font-medium text-foreground lg:inline">
           {displayName}님
         </span>

@@ -24,7 +24,7 @@ const steps = [
     step: "Step 4",
     emoji: "🎉",
     title: "바로 수업에 활용",
-    description: "PPT, 활동지, 도안, 교사대본을 활용해 수업을 진행합니다.",
+    description: "활동지, 도안, 교사대본을 활용해 수업을 진행합니다.",
   },
 ];
 

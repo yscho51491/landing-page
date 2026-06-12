@@ -1,4 +1,4 @@
-import StudioCtaButton from "@/components/auth/StudioCtaButton";
+﻿import StudioCtaButton from "@/components/auth/StudioCtaButton";
 import HeroImageGallery from "@/components/sections/HeroImageGallery";
 
 const deliverableTags = [
@@ -6,7 +6,6 @@ const deliverableTags = [
   { emoji: "📝", label: "활동지" },
   { emoji: "✂️", label: "도안" },
   { emoji: "🖼️", label: "예시작품" },
-  { emoji: "📊", label: "PPT" },
   { emoji: "🎤", label: "교사대본" },
 ];
 
@@ -43,7 +42,7 @@ export default function HeroSection() {
           <h1 className="animate-fade-in-up mt-8 text-3xl leading-snug font-extrabold text-emphasis delay-100 md:text-5xl lg:text-[3.25rem] lg:leading-tight">
             잠깐! 선생님 설마
             <br />
-            수업 계획서 짜려고 PPT 켜셨나요?
+            수업 준비에 또 밤새고 계신가요?
           </h1>
 
           <p className="animate-fade-in-up mt-5 text-xl leading-snug font-bold text-foreground delay-200 md:text-2xl lg:text-3xl">
@@ -56,7 +55,7 @@ export default function HeroSection() {
             <br />
             수업 계획서부터 활동지, 도안, 예시작품,
             <br />
-            PPT, 교사대본까지
+            교사대본까지
             <br />
             <strong className="font-semibold text-foreground">
               AI가 한 번에 만들어드립니다. ✨

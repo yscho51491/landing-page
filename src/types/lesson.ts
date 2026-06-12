@@ -53,7 +53,7 @@ export type LessonTextOutput = LessonResult;
 
 export type ResultTabId = "lessonPlan" | "teacherScript";
 
-export type ImageAssetKind = "worksheet" | "sampleArt" | "ppt";
+export type ImageAssetKind = "worksheet" | "sampleArt";
 
 export type ImageAssetStatus = "idle" | "loading" | "ready";
 
@@ -61,7 +61,7 @@ export type ImageAssetState = {
   status: ImageAssetStatus;
   /** @deprecated 단일 미리보기 — images 사용 */
   previewSrc?: string;
-  /** 생성된 이미지 data URL 목록 (활동지·예시 3장, PPT 10장) */
+  /** 생성된 이미지 data URL 목록 (활동지·예시 각 3장) */
   images?: string[];
   label: string;
   progressLabel?: string;
