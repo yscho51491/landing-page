@@ -1,19 +1,20 @@
+import { buildCraftPhotoPromptBlock } from "@/lib/lesson/craft-photo-prompt";
 import type { LabLessonIdea } from "@/types/lab";
 
 /** 이미지 API 안전 필터 회피: 실존 작가명 → 스타일 설명으로 치환 */
 const ARTIST_TO_STYLE: [RegExp, string][] = [
-  [/쿠사마\s*야요이|야요이\s*쿠사마|kusama/gi, "colorful polka dot pattern art"],
-  [/클림트|klimt/gi, "decorative floral gold pattern art"],
-  [/잭슨\s*폴록|폴록|pollock/gi, "abstract drip and splatter paint texture"],
-  [/몬드리안|mondrian/gi, "geometric primary color grid composition"],
-  [/피카소|picasso/gi, "cubist fragmented shape style"],
-  [/반\s*고흐|고흐|van\s*gogh/gi, "swirling brushstroke expressive color style"],
-  [/모네|monet/gi, "soft impressionist light and color style"],
-  [/김홍도|신사임당/gi, "traditional Korean painting style"],
-  [/제프\s*쿤스|koons/gi, "shiny balloon-like sculptural color style"],
-  [/무라카미\s*다카시|murakami/gi, "bright pop flower and smile motif style"],
-  [/모딜리아니|modigliani/gi, "elongated portrait silhouette style"],
-  [/진주\s*귀\s*고리\s*소녀/gi, "Dutch golden age portrait lighting style"],
+  [/쿠사마\s*야요이|야요이\s*쿠사마|kusama/gi, "colorful polka dot pattern"],
+  [/클림트|klimt/gi, "decorative floral gold pattern"],
+  [/잭슨\s*폴록|폴록|pollock/gi, "abstract drip paint texture"],
+  [/몬드리안|mondrian/gi, "geometric primary color grid"],
+  [/피카소|picasso/gi, "cubist fragmented shapes"],
+  [/반\s*고흐|고흐|van\s*gogh/gi, "swirling expressive brushstrokes"],
+  [/모네|monet/gi, "soft impressionist light"],
+  [/김홍도|신사임당/gi, "traditional Korean painting motifs"],
+  [/제프\s*쿤스|koons/gi, "shiny sculptural color"],
+  [/무라카미\s*다카시|murakami/gi, "bright pop flower motifs"],
+  [/모딜리아니|modigliani/gi, "elongated silhouette forms"],
+  [/진주\s*귀\s*고리\s*소녀/gi, "soft portrait lighting style"],
 ];
 
 function sanitizeForImagePrompt(text: string): string {
@@ -28,47 +29,52 @@ function sanitizeForImagePrompt(text: string): string {
     .trim();
 }
 
-const IMAGE_SAFETY_PREFIX = [
-  "Family-friendly elementary school art class finished example artwork only.",
-  "Innocent, cheerful, classroom-appropriate illustration.",
-  "No photorealistic human faces, no nudity, no violence, no text or watermark.",
-].join(" ");
-
-export function buildLabPreviewImagePrompt(
+function buildLessonVisualBrief(
   idea: LabLessonIdea,
   words: [string, string],
 ): string {
   const safeTitle = sanitizeForImagePrompt(idea.title);
-  const safeOverview = sanitizeForImagePrompt(idea.overview.slice(0, 350));
+  const safeOverview = sanitizeForImagePrompt(idea.overview.slice(0, 400));
   const safeWords = words.map((w) => sanitizeForImagePrompt(w));
 
   const materials = sanitizeForImagePrompt(
     idea.materials
       .flatMap((g) => g.items)
-      .slice(0, 6)
+      .slice(0, 10)
       .join(", "),
   );
 
-  const activities = sanitizeForImagePrompt(
+  const finalStep = idea.process.at(-1);
+  const makingSteps = sanitizeForImagePrompt(
     idea.process
       .flatMap((step) => step.points)
-      .slice(0, 3)
+      .slice(0, 6)
       .join(" "),
   );
 
+  const resultObject = finalStep
+    ? sanitizeForImagePrompt(finalStep.title)
+    : safeTitle;
+
   return [
-    IMAGE_SAFETY_PREFIX,
-    "Colored example artwork for a Korean elementary art class, portrait orientation.",
-    "FRAMING RULES: the complete artwork must be fully visible inside the frame.",
-    "Keep the main subject centered with comfortable margins on all sides.",
-    "Finished example in soft crayon and colored pencil style, warm harmonious palette.",
-    `Creative fusion theme: "${safeWords[0]}" and "${safeWords[1]}".`,
-    `Lesson title: ${safeTitle}`,
-    `Lesson summary: ${safeOverview}`,
-    `Key art-making steps: ${activities}`,
-    `Art supplies used: ${materials}`,
-    "Illustrated children's art class style, not photo realism.",
+    `Art lesson fusion theme: "${safeWords[0]}" + "${safeWords[1]}".`,
+    `Finished artwork to photograph: ${resultObject}.`,
+    `Lesson title: ${safeTitle}.`,
+    `Lesson summary: ${safeOverview}.`,
+    `How it was made: ${makingSteps}.`,
+    `Materials visible in the piece: ${materials}.`,
+    "Depict ONE completed physical art project ready for classroom display.",
   ].join("\n");
+}
+
+export function buildLabPreviewImagePrompt(
+  idea: LabLessonIdea,
+  words: [string, string],
+): string {
+  const seed = `${words[0]}-${words[1]}-${idea.title}`;
+  return [buildCraftPhotoPromptBlock(seed), buildLessonVisualBrief(idea, words)].join(
+    "\n\n",
+  );
 }
 
 /** 안전 필터 거절 시 사용하는 단순 프롬프트 */
@@ -76,18 +82,16 @@ export function buildLabPreviewImagePromptFallback(
   idea: LabLessonIdea,
   words: [string, string],
 ): string {
+  const seed = `${words[0]}-${words[1]}-fallback`;
   const safeTitle = sanitizeForImagePrompt(idea.title);
   const safeWords = words.map((w) => sanitizeForImagePrompt(w));
 
   return [
-    IMAGE_SAFETY_PREFIX,
-    "Portrait orientation children's art class example artwork on white paper.",
-    "Soft crayon and colored pencil illustration with warm cheerful colors.",
-    `Art theme combining ${safeWords[0]} and ${safeWords[1]}.`,
+    buildCraftPhotoPromptBlock(seed),
+    `Handmade art project combining ${safeWords[0]} and ${safeWords[1]} themes.`,
     `Inspired by lesson: ${safeTitle}.`,
-    "Show a completed student craft project with simple shapes, patterns, and collage elements.",
-    "Centered composition, full artwork visible, no text, no watermark.",
-  ].join("\n");
+    "Single finished craft object, centered, full object visible.",
+  ].join("\n\n");
 }
 
 export function isImageSafetyRejection(err: unknown): boolean {

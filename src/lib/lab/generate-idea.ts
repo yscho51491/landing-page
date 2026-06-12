@@ -1,9 +1,12 @@
 import {
   LAB_IDEA_DETAIL_EXPANSION_PROMPT,
+  LAB_IDEA_KOREAN_FIX_PROMPT,
   LAB_IDEA_SYSTEM_PROMPT,
   buildLabIdeaUserPrompt,
 } from "@/lib/lab/idea-prompts";
+import { labIdeaHasForeignScript } from "@/lib/lab/korean-idea";
 import { isLabProcessDetailedEnough } from "@/lib/lab/idea-quality";
+import { containsForeignScript } from "@/lib/text/korean-only";
 import { parseLabLessonIdea } from "@/lib/lab/parse-idea";
 import type { LabLessonIdea } from "@/types/lab";
 import OpenAI from "openai";
@@ -116,12 +119,32 @@ export async function generateLabIdea(
 
     try {
       const expanded = parseOrThrow(expandedRaw);
+      raw = expandedRaw;
       if (isLabProcessDetailedEnough(expanded)) {
-        return expanded;
+        idea = expanded;
+      } else {
+        idea = expanded;
       }
-      idea = expanded;
     } catch (err) {
       console.warn("[lab-generate-idea] detail expansion failed", err);
+    }
+  }
+
+  if (containsForeignScript(raw) || labIdeaHasForeignScript(idea)) {
+    try {
+      const koreanRaw = await requestLabIdeaJson(
+        openai,
+        [
+          { role: "system", content: LAB_IDEA_SYSTEM_PROMPT },
+          { role: "user", content: userPrompt },
+          { role: "assistant", content: raw },
+          { role: "user", content: LAB_IDEA_KOREAN_FIX_PROMPT },
+        ],
+        0.4,
+      );
+      idea = parseOrThrow(koreanRaw);
+    } catch (err) {
+      console.warn("[lab-generate-idea] korean fix retry failed", err);
     }
   }
 

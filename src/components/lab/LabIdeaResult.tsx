@@ -3,6 +3,7 @@
 import { fetchPreviewArtwork } from "@/lib/lab/fetch-preview-artwork";
 import type { LabLessonIdea } from "@/types/lab";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 type LabIdeaResultProps = {
@@ -29,10 +30,12 @@ export default function LabIdeaResult({
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [previewNotice, setPreviewNotice] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [publishedToMain, setPublishedToMain] = useState(false);
 
   const handlePreviewClick = () => {
     if (isPreviewing) return;
     setPreviewError(null);
+    setPublishedToMain(false);
     setShowCoinNotice(true);
   };
 
@@ -51,8 +54,15 @@ export default function LabIdeaResult({
       const result = await fetchPreviewArtwork(idea, words);
       setPreviewImage(result.imageDataUrl);
       setPreviewNotice(result.notice);
+      setPublishedToMain(Boolean(result.publishedToMain));
       onCoinsChange(result.coins);
+      if (result.publishError) {
+        setPreviewError(
+          `메인 화면 공개에 실패했습니다: ${result.publishError}`,
+        );
+      }
     } catch (err) {
+      setPublishedToMain(false);
       setPreviewNotice(null);
       setPreviewError(
         err instanceof Error ? err.message : "완성작 미리보기에 실패했습니다.",
@@ -178,14 +188,22 @@ export default function LabIdeaResult({
       )}
 
       {previewNotice && (
-        <p className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-center text-sm font-medium text-foreground">
-          {previewNotice}
+        <div className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-center text-sm font-medium text-foreground">
+          <p>{previewNotice}</p>
           {previewNotice.includes("차감") && (
             <span className="mt-1 block text-xs text-muted">
               남은 코인 {coins}개
             </span>
           )}
-        </p>
+          {publishedToMain && (
+            <Link
+              href="/"
+              className="mt-3 inline-block rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary-dark"
+            >
+              홈에서 완성작 보기
+            </Link>
+          )}
+        </div>
       )}
 
       {previewError && (

@@ -3,7 +3,7 @@ import type { ImageAssetKind } from "@/types/lesson";
 export const WORKSHEET_IMAGE_COUNT = 3;
 export const SAMPLE_ART_IMAGE_COUNT = 3;
 
-export type ImageQuality = "low" | "medium";
+export type ImageQuality = "low" | "medium" | "high";
 
 export type ImageGenSettings = {
   model: "gpt-image-1-mini" | "gpt-image-1";

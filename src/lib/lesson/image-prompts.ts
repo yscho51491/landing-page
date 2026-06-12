@@ -1,3 +1,4 @@
+import { buildCraftPhotoPromptBlock } from "@/lib/lesson/craft-photo-prompt";
 import type { LessonInput, LessonResult } from "@/types/lesson";
 
 function collectKeyActivities(result: LessonResult): string {
@@ -38,9 +39,9 @@ const WORKSHEET_VARIANTS = [
 ] as const;
 
 const SAMPLE_ART_VARIANTS = [
-  "Finished example artwork in soft crayon and colored pencil style, warm harmonious palette, child-friendly but polished, shows the main lesson subject completed.",
-  "Alternative example composition: different angle or layout, same lesson theme, expressive brushstroke texture, inspiring reference for students.",
-  "Third example emphasizing color mood and emotion of the lesson theme, gentle highlights, gallery-style presentation on light paper background.",
+  "Primary angle: straight-on product shot of the finished project, every part of the artwork sharp and fully in frame.",
+  "Alternative angle: slight three-quarter view revealing depth, layers, and mixed-media thickness of the handmade object.",
+  "Detail-rich presentation: emphasize color harmony and material contrast of the completed piece under even studio light.",
 ] as const;
 
 export function buildWorksheetImagePrompt(
@@ -69,14 +70,13 @@ export function buildSampleArtImagePrompt(
   const variant =
     SAMPLE_ART_VARIANTS[index] ?? SAMPLE_ART_VARIANTS[0];
 
+  const seed = `${input.topic}-${output.lessonPlan.title}-${index}`;
+
   return [
-    "Colored example artwork for a Korean art class, portrait orientation.",
-    "FRAMING RULES: the complete artwork must be fully visible inside the frame.",
-    "Keep the main subject centered with comfortable margins on all sides.",
-    "Nothing important may touch or get cut off at the edges of the image.",
+    buildCraftPhotoPromptBlock(seed),
     variant,
-    "Appropriate for the stated audience age group.",
-    "No watermark, no photo realism, illustrated art class style.",
+    "Korean elementary-to-teen art class finished project appropriate for the stated audience.",
     lessonContext(input, output),
-  ].join("\n");
+    "Show ONE completed physical artwork object — the final display piece students would create.",
+  ].join("\n\n");
 }

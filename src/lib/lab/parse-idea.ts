@@ -1,3 +1,4 @@
+import { normalizeLabIdeaKorean } from "@/lib/lab/korean-idea";
 import type {
   LabLessonIdea,
   LabLessonMaterialGroup,
@@ -171,5 +172,5 @@ export function parseLabLessonIdea(value: unknown): LabLessonIdea | null {
     idea.expectedEffects = ["미술 활동에 대한 흥미 증진", "자신감 있는 표현 경험"];
   }
 
-  return idea;
+  return normalizeLabIdeaKorean(idea);
 }

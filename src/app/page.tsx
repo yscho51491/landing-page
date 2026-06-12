@@ -16,7 +16,8 @@ function shuffle(items: LessonExample[]): LessonExample[] {
 
 export default async function Home() {
   const published = await getPublishedLessonExamples();
-  const items = shuffle([...published.items, ...lessonExamples]);
+  // 공개 수업은 최신순 유지, 정적 예시만 셔플
+  const items = [...published.items, ...shuffle(lessonExamples)];
 
   return (
     <>

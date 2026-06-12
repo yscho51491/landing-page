@@ -4,6 +4,8 @@ export type LabPreviewResult = {
   imageDataUrl: string;
   coins: number;
   notice: string;
+  publishedToMain?: boolean;
+  publishError?: string;
 };
 
 export async function fetchPreviewArtwork(

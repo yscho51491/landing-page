@@ -419,6 +419,8 @@ export default function LabIdeaLab() {
   const handleReset = () => {
     setResult(null);
     setNotice(null);
+    setWord1("");
+    setWord2("");
   };
 
   useEffect(() => {

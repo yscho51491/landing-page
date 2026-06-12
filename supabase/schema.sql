@@ -150,6 +150,8 @@ create table if not exists public.published_lessons (
   idea text not null default '',
   materials text[] not null default '{}',
   cover_image_url text not null,
+  lesson_detail jsonb,
+  source text not null default 'studio' check (source in ('studio', 'lab')),
   is_public boolean not null default true,
   created_at timestamptz not null default now()
 );

@@ -3,12 +3,14 @@ import {
   refundArtlabCoins,
   spendArtlabCoins,
 } from "@/lib/coins/spend-coins";
+import { publishLabPreviewToExplore } from "@/lib/explore/publish-lab-preview";
 import { generateLabPreviewImage } from "@/lib/lab/generate-preview-image";
 import { isImageSafetyRejection } from "@/lib/lab/preview-image-prompt";
 import { parseLabLessonIdea } from "@/lib/lab/parse-idea";
 import { createClient } from "@/lib/supabase/server";
 import type { LabLessonIdea } from "@/types/lab";
 import OpenAI from "openai";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 type PreviewBody = {
@@ -83,10 +85,35 @@ export async function handlePreviewArtworkPost(request: Request) {
   try {
     const imageDataUrl = await generateLabPreviewImage(apiKey, idea, words);
 
+    const published = await publishLabPreviewToExplore(
+      supabase,
+      user.id,
+      idea,
+      words,
+      imageDataUrl,
+    );
+
+    const publishedToMain = "id" in published;
+    const publishError =
+      "error" in published ? published.error : undefined;
+
+    if (publishedToMain) {
+      revalidatePath("/");
+    } else if (publishError) {
+      console.warn("[lab-preview-artwork] publish failed:", publishError);
+    }
+
+    const notice = publishedToMain
+      ? "아트랩코인 1개가 차감되었습니다. 완성작이 메인 화면에 공개되었어요."
+      : "아트랩코인 1개가 차감되었습니다.";
+
     return NextResponse.json({
       imageDataUrl,
       coins: spend.balance,
-      notice: "아트랩코인 1개가 차감됩니다.",
+      notice,
+      publishedToMain,
+      publishError,
+      publishedId: publishedToMain ? published.id : undefined,
     });
   } catch (err) {
     await refundArtlabCoins(PREVIEW_COST);

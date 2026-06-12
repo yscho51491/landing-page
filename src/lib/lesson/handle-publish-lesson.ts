@@ -9,7 +9,7 @@ type PublishBody = {
   coverImageDataUrl?: unknown;
 };
 
-const DATA_URL_PATTERN = /^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/;
+import { uploadLessonCoverImage } from "@/lib/storage/upload-cover-image";
 
 export async function handlePublishLessonPost(request: Request) {
   const supabase = await createClient();
@@ -52,38 +52,15 @@ export async function handlePublishLessonPost(request: Request) {
 
   const coverImageDataUrl =
     typeof body.coverImageDataUrl === "string" ? body.coverImageDataUrl : "";
-  const match = coverImageDataUrl.match(DATA_URL_PATTERN);
-  if (!match) {
-    return NextResponse.json(
-      { error: "커버 이미지 데이터가 올바르지 않습니다." },
-      { status: 400 },
-    );
+
+  const uploaded = await uploadLessonCoverImage(
+    supabase,
+    user.id,
+    coverImageDataUrl,
+  );
+  if ("error" in uploaded) {
+    return NextResponse.json({ error: uploaded.error }, { status: 400 });
   }
-
-  const [, imageExt, base64Data] = match;
-  const buffer = Buffer.from(base64Data, "base64");
-  const storagePath = `${user.id}/${crypto.randomUUID()}.${imageExt}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from("lesson-covers")
-    .upload(storagePath, buffer, {
-      contentType: `image/${imageExt}`,
-    });
-
-  if (uploadError) {
-    console.error("[publish-lesson] storage upload", uploadError);
-    return NextResponse.json(
-      {
-        error:
-          "커버 이미지 업로드에 실패했습니다. Supabase에 lesson-covers 버킷이 있는지 확인해 주세요.",
-      },
-      { status: 500 },
-    );
-  }
-
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("lesson-covers").getPublicUrl(storagePath);
 
   const { data: inserted, error: insertError } = await supabase
     .from("published_lessons")
@@ -93,7 +70,8 @@ export async function handlePublishLessonPost(request: Request) {
       audience: input.audience,
       idea: output.lessonPlan.overview,
       materials: output.lessonPlan.materials,
-      cover_image_url: publicUrl,
+      cover_image_url: uploaded.publicUrl,
+      source: "studio",
       is_public: true,
     })
     .select("id")
