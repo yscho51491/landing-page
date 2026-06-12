@@ -367,6 +367,7 @@ export default function LabIdeaLab() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<LabLessonIdea | null>(null);
   const [resultWords, setResultWords] = useState<[string, string]>(["", ""]);
+  const [lessonId, setLessonId] = useState<string | undefined>();
   const [coins, setCoins] = useState(0);
 
   const placeholder1 = useTypewriterPlaceholder(0);
@@ -384,10 +385,12 @@ export default function LabIdeaLab() {
     setIsGenerating(true);
     setNotice(null);
     setResult(null);
+    setLessonId(undefined);
     try {
-      const idea = await fetchGenerateIdea(w1, w2);
+      const { idea, lessonId: savedId } = await fetchGenerateIdea(w1, w2);
       setResult(idea);
       setResultWords([w1, w2]);
+      setLessonId(savedId);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setNotice(
@@ -418,6 +421,7 @@ export default function LabIdeaLab() {
 
   const handleReset = () => {
     setResult(null);
+    setLessonId(undefined);
     setNotice(null);
     setWord1("");
     setWord2("");
@@ -457,6 +461,7 @@ export default function LabIdeaLab() {
           <LabIdeaResult
             idea={result}
             words={resultWords}
+            lessonId={lessonId}
             coins={coins}
             onCoinsChange={setCoins}
             onReset={handleReset}

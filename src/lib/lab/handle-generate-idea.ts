@@ -1,4 +1,5 @@
 import { generateLabIdea } from "@/lib/lab/generate-idea";
+import { saveUserLabLesson } from "@/lib/lab/save-user-lesson";
 import { createClient } from "@/lib/supabase/server";
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
@@ -58,7 +59,16 @@ export async function handleGenerateIdeaPost(request: Request) {
 
   try {
     const idea = await generateLabIdea(apiKey, word1, word2);
-    return NextResponse.json({ idea });
+    const words: [string, string] = [word1, word2];
+
+    const saved = await saveUserLabLesson(supabase, user.id, words, idea);
+    const lessonId = "id" in saved ? saved.id : undefined;
+
+    if ("error" in saved) {
+      console.warn("[lab-generate-idea] save lesson failed:", saved.error);
+    }
+
+    return NextResponse.json({ idea, lessonId });
   } catch (err) {
     const code = err instanceof Error ? err.message : "UNKNOWN";
 

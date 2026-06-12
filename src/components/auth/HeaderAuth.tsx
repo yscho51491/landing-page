@@ -51,9 +51,12 @@ export default function HeaderAuth() {
 
     return (
       <div className="flex items-center gap-2">
-        <span className="hidden max-w-[100px] truncate text-sm font-medium text-foreground lg:inline">
+        <Link
+          href="/my"
+          className="hidden max-w-[100px] truncate text-sm font-medium text-foreground transition-colors hover:text-primary lg:inline"
+        >
           {displayName}님
-        </span>
+        </Link>
         <button
           type="button"
           onClick={handleSignOut}

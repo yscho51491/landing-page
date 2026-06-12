@@ -1,9 +1,14 @@
 import type { LabLessonIdea } from "@/types/lab";
 
+export type GenerateIdeaResult = {
+  idea: LabLessonIdea;
+  lessonId?: string;
+};
+
 export async function fetchGenerateIdea(
   word1: string,
   word2: string,
-): Promise<LabLessonIdea> {
+): Promise<GenerateIdeaResult> {
   const res = await fetch("/api/lab/generate-idea", {
     method: "POST",
     credentials: "same-origin",
@@ -11,9 +16,13 @@ export async function fetchGenerateIdea(
     body: JSON.stringify({ word1, word2 }),
   });
 
-  const data = (await res.json()) as { idea?: LabLessonIdea; error?: string };
+  const data = (await res.json()) as {
+    idea?: LabLessonIdea;
+    lessonId?: string;
+    error?: string;
+  };
   if (!res.ok || !data.idea) {
     throw new Error(data.error ?? "아이디어 생성에 실패했습니다.");
   }
-  return data.idea;
+  return { idea: data.idea, lessonId: data.lessonId };
 }

@@ -4,6 +4,8 @@ import {
   spendArtlabCoins,
 } from "@/lib/coins/spend-coins";
 import { publishLabPreviewToExplore } from "@/lib/explore/publish-lab-preview";
+import { updateUserLabLessonCover } from "@/lib/lab/save-user-lesson";
+import { uploadLessonCoverImage } from "@/lib/storage/upload-cover-image";
 import { generateLabPreviewImage } from "@/lib/lab/generate-preview-image";
 import { isImageSafetyRejection } from "@/lib/lab/preview-image-prompt";
 import { parseLabLessonIdea } from "@/lib/lab/parse-idea";
@@ -16,6 +18,7 @@ import { NextResponse } from "next/server";
 type PreviewBody = {
   idea?: unknown;
   words?: unknown;
+  lessonId?: unknown;
 };
 
 function parseWords(value: unknown): [string, string] | null {
@@ -92,6 +95,34 @@ export async function handlePreviewArtworkPost(request: Request) {
       words,
       imageDataUrl,
     );
+
+    const lessonId =
+      typeof body.lessonId === "string" ? body.lessonId.trim() : "";
+
+    if (lessonId) {
+      let coverUrl: string | undefined =
+        "coverImageUrl" in published ? published.coverImageUrl : undefined;
+
+      if (!coverUrl) {
+        const uploaded = await uploadLessonCoverImage(
+          supabase,
+          user.id,
+          imageDataUrl,
+        );
+        if ("publicUrl" in uploaded) {
+          coverUrl = uploaded.publicUrl;
+        }
+      }
+
+      if (coverUrl) {
+        await updateUserLabLessonCover(
+          supabase,
+          user.id,
+          lessonId,
+          coverUrl,
+        );
+      }
+    }
 
     const publishedToMain = "id" in published;
     const publishError =

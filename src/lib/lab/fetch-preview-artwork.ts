@@ -11,12 +11,13 @@ export type LabPreviewResult = {
 export async function fetchPreviewArtwork(
   idea: LabLessonIdea,
   words: [string, string],
+  lessonId?: string,
 ): Promise<LabPreviewResult> {
   const res = await fetch("/api/lab/preview-artwork", {
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idea, words }),
+    body: JSON.stringify({ idea, words, lessonId }),
   });
 
   const data = (await res.json()) as LabPreviewResult & { error?: string };

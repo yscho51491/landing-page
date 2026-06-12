@@ -1,5 +1,6 @@
 "use client";
 
+import { downloadLabLessonDocx } from "@/lib/export/export-lab-lesson-docx";
 import { fetchPreviewArtwork } from "@/lib/lab/fetch-preview-artwork";
 import type { LabLessonIdea } from "@/types/lab";
 import Image from "next/image";
@@ -9,6 +10,7 @@ import { useState } from "react";
 type LabIdeaResultProps = {
   idea: LabLessonIdea;
   words: [string, string];
+  lessonId?: string;
   coins: number;
   onCoinsChange: (coins: number) => void;
   onReset: () => void;
@@ -21,12 +23,14 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function LabIdeaResult({
   idea,
   words,
+  lessonId,
   coins,
   onCoinsChange,
   onReset,
 }: LabIdeaResultProps) {
   const [showCoinNotice, setShowCoinNotice] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [previewNotice, setPreviewNotice] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -51,7 +55,7 @@ export default function LabIdeaResult({
     setPreviewNotice("아트랩코인 1개가 차감됩니다.");
 
     try {
-      const result = await fetchPreviewArtwork(idea, words);
+      const result = await fetchPreviewArtwork(idea, words, lessonId);
       setPreviewImage(result.imageDataUrl);
       setPreviewNotice(result.notice);
       setPublishedToMain(Boolean(result.publishedToMain));
@@ -69,6 +73,16 @@ export default function LabIdeaResult({
       );
     } finally {
       setIsPreviewing(false);
+    }
+  };
+
+  const handleWordExport = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      await downloadLabLessonDocx(idea, words);
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -228,7 +242,7 @@ export default function LabIdeaResult({
         </div>
       )}
 
-      <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
         <button
           type="button"
           onClick={onReset}
@@ -236,6 +250,14 @@ export default function LabIdeaResult({
           className="rounded-full bg-primary px-7 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           새로운 아이디어 만들기
+        </button>
+        <button
+          type="button"
+          onClick={() => void handleWordExport()}
+          disabled={isPreviewing || isExporting}
+          className="rounded-full border-2 border-border bg-surface px-7 py-3 text-sm font-bold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isExporting ? "Word 저장 중..." : "Word 파일로 저장"}
         </button>
         <button
           type="button"

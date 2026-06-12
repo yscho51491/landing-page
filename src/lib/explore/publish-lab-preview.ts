@@ -17,7 +17,7 @@ export async function publishLabPreviewToExplore(
   idea: LabLessonIdea,
   words: [string, string],
   imageDataUrl: string,
-): Promise<{ id: string } | { error: string }> {
+): Promise<{ id: string; coverImageUrl: string } | { error: string }> {
   const uploaded = await uploadLessonCoverImage(
     supabase,
     userId,
@@ -48,7 +48,7 @@ export async function publishLabPreviewToExplore(
     .single();
 
   if (!fullError && fullInsert) {
-    return { id: fullInsert.id };
+    return { id: fullInsert.id, coverImageUrl: uploaded.publicUrl };
   }
 
   if (fullError) {
@@ -74,5 +74,5 @@ export async function publishLabPreviewToExplore(
     };
   }
 
-  return { id: minimalInsert.id };
+  return { id: minimalInsert.id, coverImageUrl: uploaded.publicUrl };
 }
