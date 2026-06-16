@@ -1,9 +1,11 @@
 "use client";
 
+import InAppBrowserNotice from "@/components/auth/InAppBrowserNotice";
 import { buildAuthCallbackUrl } from "@/lib/auth/site-url";
+import { isInAppBrowser, openInExternalBrowser } from "@/lib/auth/in-app-browser";
 import { PENDING_REFERRER_STORAGE_KEY } from "@/lib/referral/referral-errors";
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type LoginButtonsProps = {
   redirectPath?: string;
@@ -12,6 +14,16 @@ type LoginButtonsProps = {
 export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) {
   const [loading, setLoading] = useState<"google" | "kakao" | null>(null);
   const [referrerEmail, setReferrerEmail] = useState("");
+
+  const loginPageUrl = useMemo(() => {
+    if (typeof window === "undefined") return "/login";
+    const params = new URLSearchParams();
+    if (redirectPath && redirectPath !== "/") {
+      params.set("next", redirectPath);
+    }
+    const query = params.toString();
+    return `${window.location.origin}/login${query ? `?${query}` : ""}`;
+  }, [redirectPath]);
 
   const signInWithOAuth = async (provider: "google" | "kakao") => {
     setLoading(provider);
@@ -24,13 +36,14 @@ export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) 
     }
 
     const supabase = createClient();
-
     const redirectTo = buildAuthCallbackUrl(redirectPath);
+    const inApp = isInAppBrowser();
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo,
+        skipBrowserRedirect: inApp,
         queryParams:
           provider === "google"
             ? { access_type: "offline", prompt: "consent" }
@@ -41,11 +54,20 @@ export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) 
     if (error) {
       setLoading(null);
       alert("로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+
+    if (inApp && data?.url) {
+      openInExternalBrowser(data.url);
+      setLoading(null);
+      return;
     }
   };
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-3">
+      <InAppBrowserNotice loginPageUrl={loginPageUrl} />
+
       <label className="text-left">
         <span className="text-xs font-semibold text-foreground">
           추천인 ID <span className="font-normal text-muted">(선택)</span>
@@ -65,7 +87,7 @@ export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) 
 
       <button
         type="button"
-        onClick={() => signInWithOAuth("google")}
+        onClick={() => void signInWithOAuth("google")}
         disabled={loading !== null}
         className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-surface px-6 py-3.5 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-surface-alt disabled:opacity-60"
       >
@@ -81,7 +103,7 @@ export default function LoginButtons({ redirectPath = "/" }: LoginButtonsProps) 
 
       <button
         type="button"
-        onClick={() => signInWithOAuth("kakao")}
+        onClick={() => void signInWithOAuth("kakao")}
         disabled={loading !== null}
         className="flex w-full items-center justify-center gap-2 rounded-full bg-[#FEE500] px-6 py-3.5 text-sm font-semibold text-[#191919] transition-opacity hover:opacity-90 disabled:opacity-60"
       >
