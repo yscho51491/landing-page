@@ -29,9 +29,7 @@ export default function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-md px-2 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary hover:text-primary-foreground md:px-3 ${
-                item.hideOnMobile ? "hidden md:inline-flex" : ""
-              }`}
+              className="rounded-md px-2 py-2 text-sm font-medium text-muted transition-colors hover:bg-primary hover:text-primary-foreground md:px-3"
             >
               {item.mobileLabel ? (
                 <>
