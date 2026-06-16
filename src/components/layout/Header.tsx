@@ -6,7 +6,6 @@ const navItems = [
   { label: "완성작 구경", mobileLabel: "홈", href: "/" },
   { label: "수업 아이디어 실험실", mobileLabel: "랩", href: "/lab" },
   { label: "서비스 소개", mobileLabel: "소개", href: "/service" },
-  { label: "수업 만들기", href: "/studio", hideOnMobile: true },
 ];
 
 export default function Header() {

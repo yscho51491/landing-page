@@ -117,3 +117,200 @@
 .lab-word-exit {
   animation: lab-word-exit 0.45s cubic-bezier(0.55, 0, 0.55, 0.2) both;
 }
+
+/* 서비스 소개 — 믹싱 예시 카드 페이드 */
+@keyframes service-mix-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.service-mix-fade {
+  animation: service-mix-fade 4s ease-in-out both;
+}
+
+/* 서비스 소개 — 활용법 데모 애니메이션 */
+@keyframes service-demo-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes service-demo-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes service-demo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes service-demo-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes service-demo-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes service-demo-doc-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(4px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.service-demo-fade-in {
+  animation: service-demo-fade-in 0.5s ease-out both;
+}
+
+.service-demo-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  background-size: 200% 100%;
+  animation: service-demo-shimmer 1.4s ease-in-out infinite;
+}
+
+.service-demo-spin {
+  animation: service-demo-spin 0.9s linear infinite;
+}
+
+.service-demo-pop {
+  animation: service-demo-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.service-demo-slide-in {
+  animation: service-demo-slide-in 0.4s ease-out both;
+}
+
+.service-demo-doc-drop {
+  animation: service-demo-doc-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 서비스 소개 — 추천인 코인 (빙글 돌다 멈춤, GIF처럼 반복) */
+@keyframes referral-coin-spin-stop {
+  0% {
+    transform: perspective(500px) rotateY(0deg) scale(1);
+  }
+  32% {
+    transform: perspective(500px) rotateY(1440deg) scale(1.05);
+  }
+  32.01%,
+  100% {
+    transform: perspective(500px) rotateY(1440deg) scale(1);
+  }
+}
+
+.referral-coin-wrap {
+  perspective: 500px;
+}
+
+.referral-coin-spin {
+  display: inline-block;
+  transform-style: preserve-3d;
+  animation: referral-coin-spin-stop 3.2s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+/* 마이페이지 — 추천인 ID 박스 아웃라인 + 팝 */
+.referral-id-trace {
+  transition: stroke-dashoffset 1.3s ease-out;
+}
+
+@keyframes referral-id-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.035);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.referral-id-pop {
+  animation: referral-id-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 서비스 소개 — 베타 코인 주머니 낙하 */
+@keyframes beta-coin-pouch-fall {
+  0% {
+    transform: translateY(-140%) rotate(-12deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateY(0) rotate(6deg);
+  }
+  68% {
+    transform: translateY(-14px) rotate(-3deg);
+  }
+  78% {
+    transform: translateY(0) rotate(2deg);
+  }
+  86% {
+    transform: translateY(-6px) rotate(0deg);
+  }
+  92%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.beta-coin-pouch-drop {
+  display: inline-block;
+  animation: beta-coin-pouch-fall 2.8s cubic-bezier(0.34, 1.1, 0.48, 1) infinite;
+}

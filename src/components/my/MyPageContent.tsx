@@ -1,5 +1,6 @@
 "use client";
 
+import ReferralIdCard from "@/components/my/ReferralIdCard";
 import MyLessonDetail from "@/components/my/MyLessonDetail";
 import { downloadLabLessonDocx } from "@/lib/export/export-lab-lesson-docx";
 import type { MyLabLesson } from "@/lib/my/get-my-lab-lessons";
@@ -49,16 +50,7 @@ export default function MyPageContent({
         실험실에서 만든 수업과 완성작을 모아볼 수 있어요.
       </p>
 
-      {userEmail && (
-        <div className="mt-5 rounded-2xl border border-primary/25 bg-primary/5 px-5 py-4">
-          <p className="text-xs font-semibold text-foreground">내 추천인 ID</p>
-          <p className="mt-1 text-sm font-medium text-primary">{userEmail}</p>
-          <p className="mt-2 text-xs leading-relaxed text-muted">
-            친구가 가입할 때 이 이메일을 추천인 ID로 입력하면, 둘 다
-            아트랩코인 5개를 받아요.
-          </p>
-        </div>
-      )}
+      {userEmail && <ReferralIdCard userEmail={userEmail} />}
 
       <div className="mt-6 flex gap-2 rounded-full border border-border bg-surface p-1">
         <button

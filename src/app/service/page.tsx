@@ -1,36 +1,30 @@
 ﻿import MarketingLayout from "@/components/layout/MarketingLayout";
-import ProblemSection from "@/components/sections/ProblemSection";
-import ServiceIntroSection from "@/components/sections/ServiceIntroSection";
-import DeliverablesSection from "@/components/sections/DeliverablesSection";
-import TargetAudienceSection from "@/components/sections/TargetAudienceSection";
-import ComparisonSection from "@/components/sections/ComparisonSection";
-import UseCasesSection from "@/components/sections/UseCasesSection";
-import InputExampleSection from "@/components/sections/InputExampleSection";
-import GenerationExampleSection from "@/components/sections/GenerationExampleSection";
-import BenefitsSection from "@/components/sections/BenefitsSection";
-import HowToUseSection from "@/components/sections/HowToUseSection";
-import TrustSection from "@/components/sections/TrustSection";
-import FAQSection from "@/components/sections/FAQSection";
-import PreRegisterSection from "@/components/sections/PreRegisterSection";
-import FinalCTASection from "@/components/sections/FinalCTASection";
+import ServicePageContent from "@/components/service/ServicePageContent";
+import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { createClient } from "@/lib/supabase/server";
 
-export default function ServicePage() {
+export const metadata = {
+  title: "서비스 소개 | 아트티쳐랩",
+  description:
+    "두 개의 수업 아이디어를 섞어 미술수업 계획서와 완성작 예시 이미지를 만드는 AI 미술수업 아이디어 플랫폼, 아트티쳐랩.",
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function ServicePage() {
+  let isLoggedIn = false;
+
+  if (hasSupabaseEnv()) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    isLoggedIn = Boolean(user);
+  }
+
   return (
     <MarketingLayout>
-      <ProblemSection />
-      <ServiceIntroSection />
-      <DeliverablesSection />
-      <HowToUseSection />
-      <TrustSection />
-      <FAQSection />
-      <TargetAudienceSection />
-      <ComparisonSection />
-      <UseCasesSection />
-      <InputExampleSection />
-      <GenerationExampleSection />
-      <BenefitsSection />
-      <PreRegisterSection />
-      <FinalCTASection />
+      <ServicePageContent isLoggedIn={isLoggedIn} />
     </MarketingLayout>
   );
 }
