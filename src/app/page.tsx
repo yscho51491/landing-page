@@ -1,6 +1,7 @@
 ﻿import LessonExploreGrid from "@/components/explore/LessonExploreGrid";
 import Header from "@/components/layout/Header";
-import { lessonExamples, type LessonExample } from "@/data/lessonExamples";
+import { type LessonExample } from "@/data/lessonExamples";
+import { filterLessonExamplesByExistingFiles } from "@/lib/explore/filter-lesson-examples";
 import { getPublishedLessonExamples } from "@/lib/explore/get-published-lessons";
 
 export const dynamic = "force-dynamic";
@@ -16,8 +17,9 @@ function shuffle(items: LessonExample[]): LessonExample[] {
 
 export default async function Home() {
   const published = await getPublishedLessonExamples();
+  const staticExamples = filterLessonExamplesByExistingFiles();
   // 공개 수업은 최신순 유지, 정적 예시만 셔플
-  const items = [...published.items, ...shuffle(lessonExamples)];
+  const items = [...published.items, ...shuffle(staticExamples)];
 
   return (
     <>

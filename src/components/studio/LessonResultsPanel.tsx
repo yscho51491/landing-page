@@ -1,6 +1,7 @@
 "use client";
 
 import LessonPlanView from "@/components/studio/LessonPlanView";
+import { CanvasLoadingBlock } from "@/components/studio/LoadingCanvasOverlay";
 import type { PublishStatus } from "@/components/studio/StudioWorkspace";
 import TeacherScriptView from "@/components/studio/TeacherScriptView";
 import { IMAGE_ASSET_META } from "@/lib/lesson/mock-generate";
@@ -106,16 +107,15 @@ function ImageAssetPreview({
   const images = state.images ?? [];
 
   if (state.status === "loading") {
+    const detail = state.progressTotal
+      ? `${state.progressCompleted ?? 0}/${state.progressTotal}${state.progressLabel ? ` · ${state.progressLabel}` : ""}`
+      : undefined;
+
     return (
-      <div className="flex min-h-[160px] flex-col items-center justify-center rounded-xl border border-border bg-surface px-4 py-6 text-center">
-        <p className="text-sm font-medium text-foreground">{meta.label} 생성 중...</p>
-        {state.progressTotal ? (
-          <p className="mt-2 text-xs text-muted">
-            {state.progressCompleted ?? 0}/{state.progressTotal}
-            {state.progressLabel ? ` · ${state.progressLabel}` : ""}
-          </p>
-        ) : null}
-      </div>
+      <CanvasLoadingBlock
+        message="이미지를 생성하고 있어요..."
+        detail={detail ?? `${meta.label} 생성 중`}
+      />
     );
   }
 

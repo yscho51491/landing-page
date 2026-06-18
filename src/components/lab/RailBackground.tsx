@@ -17,9 +17,9 @@ export const RAIL_IMAGES = [
   "/images/explore/%EC%BB%AC%EB%9F%AC%ED%92%80%20%ED%95%B4%ED%8C%8C%EB%A6%AC.png",
   "/images/explore/%EC%96%91%EC%B4%88%20%EC%97%86%EC%9D%B4%20%EB%B0%94%ED%8B%B1%EC%88%98%EC%97%85%20(1).png",
   "/images/explore/%EC%96%91%EC%B4%88%20%EC%97%86%EC%9D%B4%20%EB%B0%94%ED%8B%B1%EC%88%98%EC%97%85%20(2).png",
-  "/images/explore/%EB%82%B4%EA%B0%80%20%EB%A7%8C%EB%93%9C%EB%8A%94%20%EB%B3%84%EC%9E%90%EB%A6%AC.png",
-  "/images/explore/%EB%9D%BC%EC%9D%B8%ED%81%B4%EB%A0%88%EC%9D%B4%EC%95%84%ED%8A%B8.png",
-  "/images/explore/parent-class-design-2.png",
+  "/images/explore/%EC%9A%B0%EC%A3%BC%EA%B3%B5%EA%B0%84%EC%9C%BC%EB%A1%9C%20%EB%91%A5%EB%91%A5.jpg",
+  "/images/explore/%EB%82%B4%EA%B0%80%20%EB%A7%8C%EB%93%A0%20%ED%86%B5%EC%A1%B0%EB%A6%BC.png",
+  "/images/explore/%EC%82%90%EB%A6%AC%EB%A6%AC%EB%A6%AC-%20%EB%A1%9C%EB%B4%87%EC%9D%84%20%EB%B3%B8%20%EC%A0%81%20%EC%9E%88%EB%82%98%EC%9A%94.jpg",
 ];
 
 function railImages(railIndex: number): string[] {

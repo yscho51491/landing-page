@@ -14,8 +14,21 @@ const FRAMES = [
 
 const FRAME_INTERVAL_MS = 480;
 
-export default function CanvasFillAnimation() {
+type CanvasFillAnimationProps = {
+  size?: "sm" | "md";
+};
+
+const SIZE_CLASS = {
+  sm: "h-28 w-28",
+  md: "h-44 w-44",
+} as const;
+
+export default function CanvasFillAnimation({
+  size = "md",
+}: CanvasFillAnimationProps) {
   const [frameIndex, setFrameIndex] = useState(0);
+  const sizeClass = SIZE_CLASS[size];
+  const dimension = size === "sm" ? 112 : 176;
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -27,14 +40,14 @@ export default function CanvasFillAnimation() {
   const frame = FRAMES[frameIndex];
 
   return (
-    <div className="relative mx-auto h-44 w-44 shrink-0">
+    <div className={`relative mx-auto shrink-0 ${sizeClass}`}>
       <Image
         key={frame.src}
         src={frame.src}
         alt={frame.alt}
-        width={176}
-        height={176}
-        className="h-44 w-44 object-contain"
+        width={dimension}
+        height={dimension}
+        className={`${sizeClass} object-contain`}
         priority
         unoptimized
       />

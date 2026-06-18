@@ -8,21 +8,49 @@ export type LessonExample = {
   aspect: LessonExampleAspect;
 };
 
-/** public/images/explore/ 폴더 이미지 12개 */
+/** public/images/explore/ 폴더 이미지 (실제 파일과 동기화) */
 export const lessonExamples: LessonExample[] = [
   {
-    id: "constellation",
-    imageSrc: "/images/explore/내가 만드는 별자리.png",
-    imageAlt: "내가 만드는 별자리 수업 완성작",
-    title: "내가 만드는 별자리",
+    id: "space-floating",
+    imageSrc: "/images/explore/우주공간으로 둥둥.jpg",
+    imageAlt: "우주공간으로 둥둥 수업 완성작",
+    title: "우주공간으로 둥둥!",
     aspect: "4:5",
   },
   {
-    id: "line-clay-art",
-    imageSrc: "/images/explore/라인클레이아트.png",
-    imageAlt: "라인클레이아트 수업 완성작",
-    title: "라인클레이아트",
-    aspect: "9:16",
+    id: "my-canned-goods",
+    imageSrc: "/images/explore/내가 만든 통조림.png",
+    imageAlt: "내가 만든 통조림 수업 완성작",
+    title: "내가 만든 통조림",
+    aspect: "4:5",
+  },
+  {
+    id: "castle-in-sky",
+    imageSrc: "/images/explore/하늘위의 성.jpg",
+    imageAlt: "하늘위의 성 수업 완성작",
+    title: "하늘위의 성",
+    aspect: "4:5",
+  },
+  {
+    id: "clay-rainbow-fish",
+    imageSrc: "/images/explore/클레이 무지개 생선.png",
+    imageAlt: "클레이 무지개 생선 수업 완성작",
+    title: "클레이 무지개 생선",
+    aspect: "4:5",
+  },
+  {
+    id: "flashlight-nightscape",
+    imageSrc: "/images/explore/빛으로 비추는 밤풍경.jpg",
+    imageAlt: "빛으로 비추는 밤풍경 수업 완성작",
+    title: "빛으로 비추는 밤풍경",
+    aspect: "4:5",
+  },
+  {
+    id: "little-mermaid",
+    imageSrc: "/images/explore/🧜‍♀️인어공주의 뒷모습🐚.png",
+    imageAlt: "인어공주를 좋아하시나요 수업 완성작",
+    title: "인어공주를 좋아하시나요?",
+    aspect: "4:5",
   },
   {
     id: "robot-collage",
@@ -30,41 +58,6 @@ export const lessonExamples: LessonExample[] = [
     imageAlt: "재활용 재료 로봇 콜라주 수업 완성작",
     title: "삐리리리- 로봇을 본 적 있나요?",
     aspect: "4:5",
-  },
-  {
-    id: "shot-2025-07-30-170705",
-    imageSrc: "/images/explore/스크린샷 2025-07-30 170705.png",
-    imageAlt: "수업 완성작 예시 수업 완성작",
-    title: "수업 완성작 예시",
-    aspect: "9:16",
-  },
-  {
-    id: "shot-2026-03-06-004553",
-    imageSrc: "/images/explore/스크린샷 2026-03-06 004553.png",
-    imageAlt: "수업 완성작 예시 수업 완성작",
-    title: "수업 완성작 예시",
-    aspect: "4:5",
-  },
-  {
-    id: "shot-2026-03-10-040909",
-    imageSrc: "/images/explore/스크린샷 2026-03-10 040909.png",
-    imageAlt: "수업 완성작 예시 수업 완성작",
-    title: "수업 완성작 예시",
-    aspect: "9:16",
-  },
-  {
-    id: "shot-2026-03-10-040942",
-    imageSrc: "/images/explore/스크린샷 2026-03-10 040942.png",
-    imageAlt: "수업 완성작 예시 수업 완성작",
-    title: "수업 완성작 예시",
-    aspect: "4:5",
-  },
-  {
-    id: "shot-2026-03-10-043449",
-    imageSrc: "/images/explore/스크린샷 2026-03-10 043449.png",
-    imageAlt: "수업 완성작 예시 수업 완성작",
-    title: "수업 완성작 예시",
-    aspect: "9:16",
   },
   {
     id: "batik-no-wax-1",
@@ -85,13 +78,6 @@ export const lessonExamples: LessonExample[] = [
     imageSrc: "/images/explore/컬러풀 해파리.png",
     imageAlt: "종이 접시 해파리 조형 수업 완성작",
     title: "컬러풀 해파리",
-    aspect: "4:5",
-  },
-  {
-    id: "parent-class-design-2",
-    imageSrc: "/images/explore/parent-class-design-2.png",
-    imageAlt: "꽃액자 디자인 예시",
-    title: "꽃액자 디자인",
     aspect: "4:5",
   },
 ];

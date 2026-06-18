@@ -2,10 +2,12 @@
 
 import { downloadLabLessonDocx } from "@/lib/export/export-lab-lesson-docx";
 import { fetchPreviewArtwork } from "@/lib/lab/fetch-preview-artwork";
+import LoadingCanvasOverlay from "@/components/studio/LoadingCanvasOverlay";
 import type { LabLessonIdea } from "@/types/lab";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 type LabIdeaResultProps = {
   idea: LabLessonIdea;
@@ -87,7 +89,18 @@ export default function LabIdeaResult({
   };
 
   return (
-    <div className="text-left">
+    <>
+      {isPreviewing &&
+        createPortal(
+          <LoadingCanvasOverlay
+            message="이미지를 생성하고 있어요..."
+            submessage="완성작 미리보기를 준비하고 있어요."
+            className="fixed inset-0 z-[210] flex items-center justify-center bg-black/45 px-5 backdrop-blur-[2px]"
+          />,
+          document.body,
+        )}
+
+      <div className="text-left">
       <p className="text-center text-xs font-semibold tracking-wide text-emphasis">
         {words[0]} × {words[1]}
       </p>
@@ -269,5 +282,6 @@ export default function LabIdeaResult({
         </button>
       </div>
     </div>
+    </>
   );
 }
