@@ -1,3 +1,4 @@
+import type { LabLessonDirection } from "@/types/lab";
 import { buildCraftPhotoPromptBlock } from "@/lib/lesson/craft-photo-prompt";
 import type { LabLessonIdea } from "@/types/lab";
 
@@ -32,49 +33,55 @@ function sanitizeForImagePrompt(text: string): string {
 function buildLessonVisualBrief(
   idea: LabLessonIdea,
   words: [string, string],
+  direction?: LabLessonDirection,
 ): string {
   const safeTitle = sanitizeForImagePrompt(idea.title);
-  const safeOverview = sanitizeForImagePrompt(idea.overview.slice(0, 400));
+  const safeOverview = sanitizeForImagePrompt(idea.overview.slice(0, 600));
   const safeWords = words.map((w) => sanitizeForImagePrompt(w));
 
   const materials = sanitizeForImagePrompt(
     idea.materials
       .flatMap((g) => g.items)
-      .slice(0, 10)
+      .slice(0, 16)
       .join(", "),
   );
 
-  const finalStep = idea.process.at(-1);
   const makingSteps = sanitizeForImagePrompt(
     idea.process
       .flatMap((step) => step.points)
-      .slice(0, 6)
+      .slice(0, 10)
       .join(" "),
   );
 
+  const finalStep = idea.process.at(-1);
   const resultObject = finalStep
     ? sanitizeForImagePrompt(finalStep.title)
     : safeTitle;
 
   return [
+    direction
+      ? `Selected lesson direction: ${sanitizeForImagePrompt(direction.title)} — ${sanitizeForImagePrompt(direction.intro)}.`
+      : "",
     `Art lesson fusion theme: "${safeWords[0]}" + "${safeWords[1]}".`,
     `Finished artwork to photograph: ${resultObject}.`,
     `Lesson title: ${safeTitle}.`,
     `Lesson summary: ${safeOverview}.`,
-    `How it was made: ${makingSteps}.`,
+    `How students make it: ${makingSteps}.`,
     `Materials visible in the piece: ${materials}.`,
-    "Depict ONE completed physical art project ready for classroom display.",
+    "Photograph ONE completed physical student art project on a wooden classroom table — same materials and techniques as the lesson, not a generic illustration.",
   ].join("\n");
 }
 
 export function buildLabPreviewImagePrompt(
   idea: LabLessonIdea,
   words: [string, string],
+  direction?: LabLessonDirection,
 ): string {
   const seed = `${words[0]}-${words[1]}-${idea.title}`;
-  return [buildCraftPhotoPromptBlock(seed), buildLessonVisualBrief(idea, words)].join(
-    "\n\n",
-  );
+  return [
+    buildCraftPhotoPromptBlock(seed),
+    buildLessonVisualBrief(idea, words, direction),
+  ].join("\n\n");
 }
 
 /** 안전 필터 거절 시 사용하는 단순 프롬프트 */

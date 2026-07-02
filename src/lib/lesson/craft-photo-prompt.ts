@@ -1,43 +1,40 @@
 /**
- * 완성작 미술 수업 — 제품 사진 스타일 공통 프롬프트
- * 인물 없음, 실제 제작물 클로즈업·스튜디오 촬영
+ * 완성작 미술 수업 — 교실 책상 위 실물 콜라주 사진 스타일
+ * (ChatGPT에 수업계획 붙여 넣었을 때 나오는 ‘안정된’ 완성작 느낌을 목표)
  */
 
 /** 촬영·조명·구도 (모든 완성작 이미지 공통) */
 export const CRAFT_PHOTO_CORE = [
-  "Professional product photography of a single finished student art project.",
-  "Macro craft shot or studio still life — sharp focus on the artwork object.",
-  "NO people, NO human figures, NO faces, NO hands, NO body parts in frame.",
-  "Soft studio lighting with natural daylight quality and even highlights.",
-  "Gentle shadows that reveal depth and material texture.",
-  "Centered composition: the complete artwork fully visible with comfortable margins on all sides.",
-  "Portrait 2:3 aspect ratio framing.",
-  "High-resolution photographic realism of a physical handmade object.",
+  "Authentic DSLR photograph of ONE finished elementary art class project — NOT a digital illustration or AI painting.",
+  "The artwork lies flat on a real light wooden art classroom table, shot from a slight overhead angle (craft tutorial / Pinterest art-class photo style).",
+  "Physical mixed-media craft: cut construction paper, glue layers, pom-poms, crayon and colored pencil strokes, glitter stickers, fabric scraps, clay — with visible paper thickness and tactile depth.",
+  "Sharp focus across the entire piece; soft natural daylight; gentle shadows under raised collage elements.",
+  "Portrait 2:3 framing. The complete artwork is fully visible with a comfortable margin.",
+  "Optional: a few real craft supplies at the table edges (glue stick, scissors, marker, pom-pom tray, paper scraps) for context — supplies stay secondary, artwork is the hero.",
+  "If the lesson includes a drawn or collage face ON the artwork paper, show it as stylized child art on the project — never a photorealistic living child in the scene.",
 ].join("\n");
 
-/** 다양한 수업에 맞는 중립 배경 (특정 예시 이미지에 한정되지 않음) */
+/** 교실·책상 배경 (회색 스튜디오 void 지양) */
 export const CRAFT_PHOTO_BACKGROUNDS = [
-  "Background: clean warm off-white seamless studio backdrop with subtle paper texture.",
-  "Background: light natural oak wood table surface, craft blog product-shot style.",
-  "Background: soft cream curved studio sweep, museum display presentation.",
-  "Background: matte charcoal gray backdrop with subtle vignette, artwork pops forward.",
-  "Background: soft neutral bokeh, shallow depth of field behind the object.",
+  "Setting: warm oak elementary art table, soft window daylight, scattered colorful paper scraps at corners.",
+  "Setting: light birch craft desk flat lay, natural classroom ambiance, a glue stick and scissors partly visible at one edge.",
+  "Setting: cream art paper on wooden table, after-school art room mood, pom-pom bowl and markers softly blurred at the side.",
 ] as const;
 
-/** 재료·질감 — 수업 주제에 맞게 AI가 선택하도록 유도 */
+/** 재료·질감 */
 export const CRAFT_PHOTO_TEXTURE = [
-  "Show authentic handmade material textures appropriate to the lesson:",
-  "visible paper or cardboard grain, layered collage edges, paint brushstrokes,",
-  "fabric weave, ribbon folds, clay or modeling material volume,",
-  "glue layers, mixed-media depth — whatever matches the described project.",
-  "Tactile, dimensional, clearly physical — NOT flat cartoon or generic digital illustration.",
+  "Show authentic handmade textures matching the lesson materials:",
+  "torn paper edges, layered collage, visible glue shine, fuzzy pom-poms, glitter specks,",
+  "brushstrokes, pipe cleaners, yarn, clay volume — clearly a physical object photographed,",
+  "NOT flat cartoon, NOT vector, NOT Procreate-style digital drawing on grey void.",
 ].join(" ");
 
 /** 금지 사항 */
 export const CRAFT_PHOTO_NEGATIVE = [
-  "FORBIDDEN: watermark, logo, text, letters, numbers, captions, labels.",
-  "FORBIDDEN: blurry, low-resolution, flat cartoon, clip-art, vague children's book illustration.",
-  "FORBIDDEN: photorealistic people, students, teachers, crowd scenes.",
+  "FORBIDDEN: watermark, logo, readable text, letters, numbers, captions, labels.",
+  "FORBIDDEN: grey empty void, dark studio backdrop, floating object with no table, clip-art, children's book illustration, anime, vector art.",
+  "FORBIDDEN: blurry, low-resolution, oversaturated AI-art look.",
+  "FORBIDDEN: photorealistic children standing in frame, hands holding the work, classroom group photos.",
 ].join("\n");
 
 function hashSeed(seed: string): number {
@@ -48,14 +45,16 @@ function hashSeed(seed: string): number {
   return Math.abs(h);
 }
 
-/** 수업마다 일관된 배경 선택 (같은 수업은 같은 배경) */
 export function pickCraftPhotoBackground(seed: string): string {
   const idx = hashSeed(seed) % CRAFT_PHOTO_BACKGROUNDS.length;
   return CRAFT_PHOTO_BACKGROUNDS[idx];
 }
 
 export function buildCraftPhotoPromptBlock(seed: string): string {
-  return [CRAFT_PHOTO_CORE, pickCraftPhotoBackground(seed), CRAFT_PHOTO_TEXTURE, CRAFT_PHOTO_NEGATIVE].join(
-    "\n",
-  );
+  return [
+    CRAFT_PHOTO_CORE,
+    pickCraftPhotoBackground(seed),
+    CRAFT_PHOTO_TEXTURE,
+    CRAFT_PHOTO_NEGATIVE,
+  ].join("\n");
 }

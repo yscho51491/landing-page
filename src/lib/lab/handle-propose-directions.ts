@@ -1,6 +1,4 @@
-import { generateLabIdea } from "@/lib/lab/generate-idea";
-import { parseLabLessonDirection } from "@/lib/lab/direction-prompts";
-import { saveUserLabLesson } from "@/lib/lab/save-user-lesson";
+import { generateLabDirections } from "@/lib/lab/generate-directions";
 import { createClient } from "@/lib/supabase/server";
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
@@ -12,17 +10,14 @@ function parseWord(value: unknown): string | null {
   return word;
 }
 
-export async function handleGenerateIdeaPost(request: Request) {
+export async function handleProposeDirectionsPost(request: Request) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json(
-      { error: "로그인이 필요합니다." },
-      { status: 401 },
-    );
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
 
   const apiKey = process.env.OPENAI_API_KEY?.trim();
@@ -43,15 +38,13 @@ export async function handleGenerateIdeaPost(request: Request) {
     );
   }
 
-  const { word1: rawWord1, word2: rawWord2, direction: rawDirection } = (body ?? {}) as {
+  const { word1: rawWord1, word2: rawWord2 } = (body ?? {}) as {
     word1?: unknown;
     word2?: unknown;
-    direction?: unknown;
   };
 
   const word1 = parseWord(rawWord1);
   const word2 = parseWord(rawWord2);
-  const direction = parseLabLessonDirection(rawDirection);
 
   if (!word1 || !word2) {
     return NextResponse.json(
@@ -60,25 +53,9 @@ export async function handleGenerateIdeaPost(request: Request) {
     );
   }
 
-  if (!direction) {
-    return NextResponse.json(
-      { error: "수업 방향을 선택해 주세요." },
-      { status: 400 },
-    );
-  }
-
   try {
-    const idea = await generateLabIdea(apiKey, word1, word2, direction);
-    const words: [string, string] = [word1, word2];
-
-    const saved = await saveUserLabLesson(supabase, user.id, words, idea);
-    const lessonId = "id" in saved ? saved.id : undefined;
-
-    if ("error" in saved) {
-      console.warn("[lab-generate-idea] save lesson failed:", saved.error);
-    }
-
-    return NextResponse.json({ idea, lessonId });
+    const directions = await generateLabDirections(apiKey, word1, word2);
+    return NextResponse.json({ directions });
   } catch (err) {
     const code = err instanceof Error ? err.message : "UNKNOWN";
 
@@ -114,9 +91,9 @@ export async function handleGenerateIdeaPost(request: Request) {
       }
     }
 
-    console.error("[lab-generate-idea]", err);
+    console.error("[lab-propose-directions]", err);
     return NextResponse.json(
-      { error: "아이디어 생성에 실패했습니다. 잠시 후 다시 시도해 주세요." },
+      { error: "수업 방향 제안에 실패했습니다. 잠시 후 다시 시도해 주세요." },
       { status: 500 },
     );
   }

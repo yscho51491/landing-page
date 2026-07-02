@@ -19,10 +19,10 @@ function lessonContext(input: LessonInput, output: LessonResult): string {
     `Lesson title: ${output.lessonPlan.title}`,
     `Topic: ${input.topic}`,
     `Audience: ${input.audience}`,
-    `Duration: ${input.duration}`,
-    `Overview: ${output.lessonPlan.overview.slice(0, 400)}`,
+    `Overview: ${output.lessonPlan.overview.slice(0, 600)}`,
     `Main activities: ${collectKeyActivities(output)}`,
-    `Materials: ${output.lessonPlan.materials.slice(0, 5).join(", ")}`,
+    `Materials to show in the artwork: ${output.lessonPlan.materials.join(", ")}`,
+    "Depict the exact finished student project described above — same materials, same collage/3D techniques, photographed on a classroom table.",
   ].join("\n");
 }
 
@@ -39,9 +39,9 @@ const WORKSHEET_VARIANTS = [
 ] as const;
 
 const SAMPLE_ART_VARIANTS = [
-  "Primary angle: straight-on product shot of the finished project, every part of the artwork sharp and fully in frame.",
-  "Alternative angle: slight three-quarter view revealing depth, layers, and mixed-media thickness of the handmade object.",
-  "Detail-rich presentation: emphasize color harmony and material contrast of the completed piece under even studio light.",
+  "Primary shot: finished project centered on the wooden art table, straight-on with slight overhead tilt — every collage layer sharp.",
+  "Flat-lay angle: artwork on table with a few matching craft supplies (from the lesson materials list) visible at the edges.",
+  "Detail-forward shot: emphasize raised pom-poms, paper layers, glue texture, and mixed-media depth under even daylight.",
 ] as const;
 
 export function buildWorksheetImagePrompt(

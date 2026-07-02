@@ -21,7 +21,7 @@ export const IMAGE_GEN_SETTINGS: Record<ImageAssetKind, ImageGenSettings> = {
   },
   sampleArt: {
     model: "gpt-image-1",
-    quality: "medium",
+    quality: "high",
     size: "1024x1536",
     count: SAMPLE_ART_IMAGE_COUNT,
   },

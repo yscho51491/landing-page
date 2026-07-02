@@ -3,7 +3,7 @@
 import { downloadLabLessonDocx } from "@/lib/export/export-lab-lesson-docx";
 import { fetchPreviewArtwork } from "@/lib/lab/fetch-preview-artwork";
 import LoadingCanvasOverlay from "@/components/studio/LoadingCanvasOverlay";
-import type { LabLessonIdea } from "@/types/lab";
+import type { LabLessonDirection, LabLessonIdea } from "@/types/lab";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 type LabIdeaResultProps = {
   idea: LabLessonIdea;
   words: [string, string];
+  direction?: LabLessonDirection;
   lessonId?: string;
   coins: number;
   onCoinsChange: (coins: number) => void;
@@ -25,6 +26,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function LabIdeaResult({
   idea,
   words,
+  direction,
   lessonId,
   coins,
   onCoinsChange,
@@ -57,7 +59,7 @@ export default function LabIdeaResult({
     setPreviewNotice("아트랩코인 1개가 차감됩니다.");
 
     try {
-      const result = await fetchPreviewArtwork(idea, words, lessonId);
+      const result = await fetchPreviewArtwork(idea, words, lessonId, direction);
       setPreviewImage(result.imageDataUrl);
       setPreviewNotice(result.notice);
       setPublishedToMain(Boolean(result.publishedToMain));

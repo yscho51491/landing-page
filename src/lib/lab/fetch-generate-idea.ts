@@ -1,4 +1,4 @@
-import type { LabLessonIdea } from "@/types/lab";
+import type { LabLessonDirection, LabLessonIdea } from "@/types/lab";
 
 export type GenerateIdeaResult = {
   idea: LabLessonIdea;
@@ -8,12 +8,13 @@ export type GenerateIdeaResult = {
 export async function fetchGenerateIdea(
   word1: string,
   word2: string,
+  direction: LabLessonDirection,
 ): Promise<GenerateIdeaResult> {
   const res = await fetch("/api/lab/generate-idea", {
     method: "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ word1, word2 }),
+    body: JSON.stringify({ word1, word2, direction }),
   });
 
   const data = (await res.json()) as {

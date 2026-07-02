@@ -8,9 +8,10 @@ import { updateUserLabLessonCover } from "@/lib/lab/save-user-lesson";
 import { uploadLessonCoverImage } from "@/lib/storage/upload-cover-image";
 import { generateLabPreviewImage } from "@/lib/lab/generate-preview-image";
 import { isImageSafetyRejection } from "@/lib/lab/preview-image-prompt";
+import { parseLabLessonDirection } from "@/lib/lab/direction-prompts";
 import { parseLabLessonIdea } from "@/lib/lab/parse-idea";
 import { createClient } from "@/lib/supabase/server";
-import type { LabLessonIdea } from "@/types/lab";
+import type { LabLessonDirection, LabLessonIdea } from "@/types/lab";
 import OpenAI from "openai";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
@@ -18,6 +19,7 @@ import { NextResponse } from "next/server";
 type PreviewBody = {
   idea?: unknown;
   words?: unknown;
+  direction?: unknown;
   lessonId?: unknown;
 };
 
@@ -63,6 +65,7 @@ export async function handlePreviewArtworkPost(request: Request) {
   const body = (rawBody ?? {}) as PreviewBody;
   const words = parseWords(body.words);
   const idea = parseLabLessonIdea(body.idea);
+  const direction = parseLabLessonDirection(body.direction) ?? undefined;
 
   if (!words || !idea) {
     return NextResponse.json(
@@ -86,7 +89,12 @@ export async function handlePreviewArtworkPost(request: Request) {
   }
 
   try {
-    const imageDataUrl = await generateLabPreviewImage(apiKey, idea, words);
+    const imageDataUrl = await generateLabPreviewImage(
+      apiKey,
+      idea,
+      words,
+      direction,
+    );
 
     const published = await publishLabPreviewToExplore(
       supabase,

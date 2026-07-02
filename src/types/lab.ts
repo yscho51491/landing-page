@@ -28,3 +28,10 @@ export type LabLessonIdea = {
   /** ✨ 기대 효과 */
   expectedEffects: string[];
 };
+
+/** 두 단어 조합으로 AI가 제안하는 수업 방향 (최종 기획 전 선택 단계) */
+export type LabLessonDirection = {
+  id: string;
+  title: string;
+  intro: string;
+};

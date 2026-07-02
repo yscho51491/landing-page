@@ -8,7 +8,7 @@ import { labIdeaHasForeignScript } from "@/lib/lab/korean-idea";
 import { isLabProcessDetailedEnough } from "@/lib/lab/idea-quality";
 import { containsForeignScript } from "@/lib/text/korean-only";
 import { parseLabLessonIdea } from "@/lib/lab/parse-idea";
-import type { LabLessonIdea } from "@/types/lab";
+import type { LabLessonDirection, LabLessonIdea } from "@/types/lab";
 import OpenAI from "openai";
 
 const MODEL = "gpt-4o-mini";
@@ -75,9 +75,10 @@ export async function generateLabIdea(
   apiKey: string,
   word1: string,
   word2: string,
+  direction?: LabLessonDirection,
 ): Promise<LabLessonIdea> {
   const openai = new OpenAI({ apiKey });
-  const userPrompt = buildLabIdeaUserPrompt(word1, word2);
+  const userPrompt = buildLabIdeaUserPrompt(word1, word2, direction);
   const baseMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
     { role: "system", content: LAB_IDEA_SYSTEM_PROMPT },
     { role: "user", content: userPrompt },

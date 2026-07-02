@@ -110,8 +110,22 @@ JSON 스키마는 그대로 유지하고, process 각 단계의 points만 보강
 - "이야기한다", "만든다" 같은 막연한 표현 금지
 - 재료명·동작·순서가 보이게 작성`;
 
-export function buildLabIdeaUserPrompt(word1: string, word2: string): string {
+export function buildLabIdeaUserPrompt(
+  word1: string,
+  word2: string,
+  direction?: { title: string; intro: string },
+): string {
+  const directionBlock = direction
+    ? `
+【사용자가 선택한 수업 방향 — 반드시 이 방향으로 작성】
+- 방향 제목: ${direction.title}
+- 한 줄 소개: ${direction.intro}
+
+위 방향의 컨셉·활동·결과물을 그대로 따르며, 아래 두 단어를 자연스럽게 녹여 넣으세요.`
+    : "";
+
   return `두 단어: "${word1}" + "${word2}"
+${directionBlock}
 
 이 두 단어를 결합한 미술 수업 아이디어를 JSON으로 작성하세요.
 특히 process의 각 단계마다 points 3문장 이상으로, 학생의 손 행동(그리기·오리기·붙이기·꾸미기)이 구체적으로 보이게 작성하세요.

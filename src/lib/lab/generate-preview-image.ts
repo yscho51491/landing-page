@@ -4,7 +4,7 @@ import {
   buildLabPreviewImagePromptFallback,
   isImageSafetyRejection,
 } from "@/lib/lab/preview-image-prompt";
-import type { LabLessonIdea } from "@/types/lab";
+import type { LabLessonDirection, LabLessonIdea } from "@/types/lab";
 import OpenAI from "openai";
 
 function sleep(ms: number) {
@@ -54,12 +54,13 @@ export async function generateLabPreviewImage(
   apiKey: string,
   idea: LabLessonIdea,
   words: [string, string],
+  direction?: LabLessonDirection,
 ): Promise<string> {
   const settings = IMAGE_GEN_SETTINGS.sampleArt;
   const openai = new OpenAI({ apiKey });
 
   const prompts = [
-    buildLabPreviewImagePrompt(idea, words),
+    buildLabPreviewImagePrompt(idea, words, direction),
     buildLabPreviewImagePromptFallback(idea, words),
   ];
 

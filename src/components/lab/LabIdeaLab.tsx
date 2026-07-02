@@ -1,11 +1,14 @@
 "use client";
 
+import LoginButtons from "@/components/auth/LoginButtons";
+import LabDirectionPicker from "@/components/lab/LabDirectionPicker";
 import LabIdeaResult from "@/components/lab/LabIdeaResult";
 import { RAIL_IMAGES } from "@/components/lab/RailBackground";
 import LoadingCanvasOverlay from "@/components/studio/LoadingCanvasOverlay";
 import { fetchUserCoins } from "@/lib/coins/fetch-coins";
 import { fetchGenerateIdea } from "@/lib/lab/fetch-generate-idea";
-import type { LabLessonIdea } from "@/types/lab";
+import { fetchProposeDirections } from "@/lib/lab/fetch-propose-directions";
+import type { LabLessonDirection, LabLessonIdea } from "@/types/lab";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -154,7 +157,8 @@ const TYPE_MS = 160;
 const DELETE_MS = 80;
 const HOLD_MS = 1400;
 
-/** 단어를 한 글자씩 타이핑했다가 지우는 플레이스홀더 훅 */
+type LoadingMode = "directions" | "idea" | null;
+
 function useTypewriterPlaceholder(wordOffset: number): string {
   const [text, setText] = useState("");
   const stateRef = useRef({
@@ -203,7 +207,6 @@ function useTypewriterPlaceholder(wordOffset: number): string {
   return text;
 }
 
-/** 헤드라인 단어 로테이터 — 완전히 사라진 뒤 다음 단어가 나타남 (겹침 없음) */
 function HeadlineWordRotator() {
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"visible" | "exiting" | "entering">(
@@ -247,7 +250,6 @@ function HeadlineWordRotator() {
   );
 }
 
-/** 예시 수업 이미지 가로 롤링 */
 function ImageMarquee({
   direction,
   tall = false,
@@ -255,7 +257,6 @@ function ImageMarquee({
   direction: "left" | "right";
   tall?: boolean;
 }) {
-  // 끊김 없는 루프를 위해 이미지 목록을 2배로 이어붙임
   const looped = [...RAIL_IMAGES, ...RAIL_IMAGES];
 
   return (
@@ -294,20 +295,30 @@ function randomWord(exclude?: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+function isLoginRequiredMessage(message: string): boolean {
+  return message.includes("로그인");
+}
+
 export default function LabIdeaLab() {
   const [word1, setWord1] = useState("");
   const [word2, setWord2] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [loadingMode, setLoadingMode] = useState<LoadingMode>(null);
+  const [pendingWords, setPendingWords] = useState<[string, string] | null>(null);
+  const [directions, setDirections] = useState<LabLessonDirection[] | null>(null);
+  const [selectedDirection, setSelectedDirection] =
+    useState<LabLessonDirection | null>(null);
   const [result, setResult] = useState<LabLessonIdea | null>(null);
   const [resultWords, setResultWords] = useState<[string, string]>(["", ""]);
   const [lessonId, setLessonId] = useState<string | undefined>();
   const [coins, setCoins] = useState(0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const placeholder1 = useTypewriterPlaceholder(0);
   const placeholder2 = useTypewriterPlaceholder(PLACEHOLDER_OFFSET_2);
 
   const bothFilled = word1.trim().length > 0 && word2.trim().length > 0;
+  const isBusy = loadingMode !== null;
 
   useEffect(() => {
     void fetchUserCoins()
@@ -315,60 +326,188 @@ export default function LabIdeaLab() {
       .catch(() => setCoins(0));
   }, []);
 
-  const generate = async (w1: string, w2: string) => {
-    setIsGenerating(true);
+  const proposeDirections = async (w1: string, w2: string) => {
+    setLoadingMode("directions");
     setNotice(null);
+    setDirections(null);
+    setSelectedDirection(null);
     setResult(null);
     setLessonId(undefined);
+    setPendingWords([w1, w2]);
+
     try {
-      const { idea, lessonId: savedId } = await fetchGenerateIdea(w1, w2);
-      setResult(idea);
-      setResultWords([w1, w2]);
-      setLessonId(savedId);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const next = await fetchProposeDirections(w1, w2);
+      setDirections(next);
     } catch (err) {
-      setNotice(
-        err instanceof Error ? err.message : "아이디어 생성에 실패했습니다.",
-      );
+      setPendingWords(null);
+      const message =
+        err instanceof Error ? err.message : "수업 방향 제안에 실패했습니다.";
+      if (isLoginRequiredMessage(message)) {
+        setShowLoginModal(true);
+        setNotice(null);
+      } else {
+        setNotice(message);
+      }
     } finally {
-      setIsGenerating(false);
+      setLoadingMode(null);
     }
   };
 
-  const handleGenerate = () => {
-    if (isGenerating) return;
+  const generateFromDirection = async (
+    w1: string,
+    w2: string,
+    direction: LabLessonDirection,
+  ) => {
+    setLoadingMode("idea");
+    setNotice(null);
+    setSelectedDirection(direction);
+
+    try {
+      const { idea, lessonId: savedId } = await fetchGenerateIdea(w1, w2, direction);
+      setResult(idea);
+      setResultWords([w1, w2]);
+      setLessonId(savedId);
+      setDirections(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "아이디어 생성에 실패했습니다.";
+      if (isLoginRequiredMessage(message)) {
+        setShowLoginModal(true);
+        setNotice(null);
+      } else {
+        setNotice(message);
+      }
+    } finally {
+      setLoadingMode(null);
+    }
+  };
+
+  const handlePropose = () => {
+    if (isBusy) return;
     if (!bothFilled) {
       setNotice("아이디어를 입력해주세요.");
       return;
     }
-    void generate(word1.trim(), word2.trim());
+    void proposeDirections(word1.trim(), word2.trim());
   };
 
   const handleRandom = () => {
-    if (isGenerating) return;
+    if (isBusy) return;
     const w1 = word1.trim() || randomWord();
     const w2 = word2.trim() || randomWord(w1);
     setWord1(w1);
     setWord2(w2);
-    void generate(w1, w2);
+    void proposeDirections(w1, w2);
+  };
+
+  const handleDirectionSelect = (direction: LabLessonDirection) => {
+    if (!pendingWords || isBusy) return;
+    void generateFromDirection(pendingWords[0], pendingWords[1], direction);
+  };
+
+  const handleBackToInput = () => {
+    if (isBusy) return;
+    setDirections(null);
+    setPendingWords(null);
+    setSelectedDirection(null);
+    setNotice(null);
   };
 
   const handleReset = () => {
     setResult(null);
     setLessonId(undefined);
+    setDirections(null);
+    setPendingWords(null);
+    setSelectedDirection(null);
     setNotice(null);
     setWord1("");
     setWord2("");
   };
 
   useEffect(() => {
-    if (!result) return;
+    if (!result && !directions) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [result]);
+  }, [result, directions]);
+
+  const loginModal =
+    showLoginModal &&
+    createPortal(
+      <div
+        className="fixed inset-0 z-[220] flex items-center justify-center bg-black/60 p-5 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lab-login-modal-title"
+      >
+        <div
+          className="w-full max-w-md rounded-3xl bg-surface p-8 text-center shadow-2xl md:p-10"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            onClick={() => setShowLoginModal(false)}
+            aria-label="닫기"
+            className="float-right flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-emphasis hover:text-emphasis"
+          >
+            ✕
+          </button>
+          <h2
+            id="lab-login-modal-title"
+            className="mt-2 text-xl font-bold text-foreground"
+          >
+            로그인하고 수업 아이디어를 만들어 보세요
+          </h2>
+          <p className="mt-2 text-sm text-muted">
+            Google 또는 카카오로 로그인하면 AI 수업 기획을 시작할 수 있어요.
+          </p>
+          <div className="mt-7 flex justify-center">
+            <LoginButtons redirectPath="/lab" />
+          </div>
+        </div>
+      </div>,
+      document.body,
+    );
+
+  const directionModal =
+    directions &&
+    pendingWords &&
+    createPortal(
+      <div
+        className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/60 p-4 pt-16 backdrop-blur-sm md:p-8 md:pt-20"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lab-direction-picker-title"
+      >
+        <div
+          className="mb-8 w-full max-w-2xl rounded-3xl bg-surface p-7 shadow-2xl md:p-10"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            onClick={handleBackToInput}
+            disabled={isBusy}
+            aria-label="닫기"
+            className="float-right flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-emphasis hover:text-emphasis disabled:opacity-50"
+          >
+            ✕
+          </button>
+          <div id="lab-direction-picker-title">
+            <LabDirectionPicker
+              words={pendingWords}
+              directions={directions}
+              onSelect={handleDirectionSelect}
+              onBack={handleBackToInput}
+              disabled={isBusy}
+            />
+          </div>
+        </div>
+      </div>,
+      document.body,
+    );
 
   const resultModal =
     result &&
@@ -395,6 +534,7 @@ export default function LabIdeaLab() {
           <LabIdeaResult
             idea={result}
             words={resultWords}
+            direction={selectedDirection ?? undefined}
             lessonId={lessonId}
             coins={coins}
             onCoinsChange={setCoins}
@@ -406,21 +546,26 @@ export default function LabIdeaLab() {
     );
 
   const loadingOverlay =
-    isGenerating &&
+    loadingMode &&
     createPortal(
       <LoadingCanvasOverlay
-        message="아이디어를 만들고 있어요..."
+        message={
+          loadingMode === "directions"
+            ? "수업 방향을 찾고 있어요..."
+            : "수업 기획안을 만들고 있어요..."
+        }
         submessage="잠시만 기다려 주세요."
-        className="fixed inset-0 z-[190] flex items-center justify-center bg-black/45 px-5 backdrop-blur-[2px]"
+        className="fixed inset-0 z-[210] flex items-center justify-center bg-black/45 px-5 backdrop-blur-[2px]"
       />,
       document.body,
     );
 
   return (
     <section className="relative w-full overflow-hidden bg-background">
+      {loginModal}
+      {directionModal}
       {resultModal}
       {loadingOverlay}
-      {/* ── 히어로: 화면 높이 꽉 채움, 제목은 상단 고정 / 카드는 하단 ── */}
       <div className="flex min-h-[calc(100dvh-4.25rem)] flex-col">
         <div className="relative z-10 shrink-0 px-5 pt-10 pb-6 text-center md:pt-14 md:pb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
@@ -436,7 +581,6 @@ export default function LabIdeaLab() {
             <ImageMarquee direction="left" tall />
           </div>
 
-          {/* 입력 카드 — 마퀴 위, 히어로 하단에 배치 */}
           <div className="relative z-10 mx-auto w-full px-5">
             <div className="mx-auto w-full max-w-3xl rounded-3xl border border-primary/25 bg-surface/97 p-10 shadow-[0_20px_60px_rgba(0,0,0,0.18)] backdrop-blur-md md:p-12">
               <p className="text-center text-4xl" aria-hidden>
@@ -450,12 +594,7 @@ export default function LabIdeaLab() {
                 <br />
                 지금 바로 2가지 단어를 작성해보세요.
                 <br />
-                완전히 새로운 시각으로 탐험해보고 싶다면
-                <br />
-                <strong className="font-semibold text-foreground">
-                  &lsquo;랜덤 생성&rsquo;
-                </strong>
-                을 누르시면 됩니다.
+                AI가 3가지 수업 방향을 제안해 드려요.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
                 <input
@@ -466,7 +605,7 @@ export default function LabIdeaLab() {
                     setNotice(null);
                   }}
                   maxLength={10}
-                  disabled={isGenerating}
+                  disabled={isBusy}
                   placeholder={placeholder1}
                   aria-label="첫 번째 단어"
                   className="w-full rounded-xl border border-border bg-background px-5 py-4 text-center text-lg font-semibold text-foreground outline-none ring-emphasis/30 transition-shadow placeholder:font-normal placeholder:text-gray-300 focus:ring-2 sm:w-56"
@@ -479,7 +618,7 @@ export default function LabIdeaLab() {
                     setNotice(null);
                   }}
                   maxLength={10}
-                  disabled={isGenerating}
+                  disabled={isBusy}
                   placeholder={placeholder2}
                   aria-label="두 번째 단어"
                   className="w-full rounded-xl border border-border bg-background px-5 py-4 text-center text-lg font-semibold text-foreground outline-none ring-emphasis/30 transition-shadow placeholder:font-normal placeholder:text-gray-300 focus:ring-2 sm:w-56"
@@ -495,23 +634,23 @@ export default function LabIdeaLab() {
               <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row">
                 <button
                   type="button"
-                  onClick={handleGenerate}
-                  disabled={!bothFilled || isGenerating}
+                  onClick={handlePropose}
+                  disabled={!bothFilled || isBusy}
                   className={`rounded-full px-9 py-4 text-base font-bold transition-all ${
-                    bothFilled && !isGenerating
+                    bothFilled && !isBusy
                       ? "bg-primary text-primary-foreground hover:bg-primary-dark"
                       : "cursor-not-allowed bg-border text-muted"
                   }`}
                 >
-                  아이디어 생성
+                  수업 방향 보기
                 </button>
                 <button
                   type="button"
                   onClick={handleRandom}
-                  disabled={isGenerating}
+                  disabled={isBusy}
                   className="rounded-full border-2 border-primary bg-surface px-9 py-4 text-base font-bold text-foreground transition-colors hover:bg-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isGenerating ? "잠시만요..." : "랜덤 생성"}
+                  {isBusy ? "잠시만요..." : "랜덤 생성"}
                 </button>
               </div>
             </div>
@@ -519,7 +658,6 @@ export default function LabIdeaLab() {
         </div>
       </div>
 
-      {/* ── 하단: 안내 문구 + 좌→우 롤링 ── */}
       <div className="border-t border-border bg-surface-alt/40 pt-20 pb-24">
         <div className="px-5 text-center">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground md:text-4xl">
