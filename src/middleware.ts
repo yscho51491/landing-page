@@ -6,7 +6,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Public pages (/lab, /, /service …) skip middleware to avoid 504 timeouts.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/studio/:path*",
+    "/my/:path*",
+    "/login",
+    "/auth/:path*",
+    "/api/:path*",
   ],
 };
